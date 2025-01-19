@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Oil Prices</title>
+</head>
+<body>
+<h1>Oil Prices</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>TRADE_DT</th>
+        <th>PRODCD</th>
+        <th>PRODNM</th>
+        <th>PRICE</th>
+        <th>DIFF</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="oil : ${oilList}">
+        <td th:text="${oil.TRADE_DT}">20250119</td>
+        <td th:text="${oil.PRODCD}">B034</td>
+        <td th:text="${oil.PRODNM}">고급휘발유</td>
+        <td th:text="${oil.PRICE}">1949.65</td>
+        <td th:text="${oil.DIFF}">+0.85</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
