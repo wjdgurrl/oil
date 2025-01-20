@@ -29,7 +29,7 @@ public class OilService {
 
     public Map<String, Object> fetchOilDataAsMap() {
 
-
+// 서구 지역만 먼저 가져와 보자
 
         String apiUrl = API_KEY; // 실제 API URL
         try {
