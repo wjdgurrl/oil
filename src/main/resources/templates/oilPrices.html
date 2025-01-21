@@ -8,20 +8,31 @@
 <table border="1">
     <thead>
     <tr>
-        <th>TRADE_DT</th>
-        <th>PRODCD</th>
-        <th>PRODNM</th>
-        <th>PRICE</th>
-        <th>DIFF</th>
+        <th>주유소 코드</th>
+        <th>상표</th>
+        <th>충전소 상표</th>
+        <th>상호</th>
+        <th>지번 주소</th>
+        <th>도로명 주소</th>
+        <th>소재지 시군코드</th>
+        <th>업종구분</th>
+        <th>GIS X좌표</th>
+        <th>GIS Y좌표</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="oil : ${oilList}">
-        <td th:text="${oil.TRADE_DT}">20250119</td>
-        <td th:text="${oil.PRODCD}">B034</td>
-        <td th:text="${oil.PRODNM}">고급휘발유</td>
-        <td th:text="${oil.PRICE}">1949.65</td>
-        <td th:text="${oil.DIFF}">+0.85</td>
+    <!-- result['OIL'] 리스트를 순회 -->
+    <tr th:each="oil : ${result['OIL']}">
+        <td th:text="${oil['UNI_ID']}">UNI_ID</td>
+        <td th:text="${oil['POLL_DIV_CD']}">POLL_DIV_CD</td>
+        <td th:text="${oil['GPOLL_DIV_CD']}">GPOLL_DIV_CD</td>
+        <td th:text="${oil['OS_NM']}">OS_NM</td>
+        <td th:text="${oil['VAN_ADR']}">VAN_ADR</td>
+        <td th:text="${oil['NEW_ADR']}">NEW_ADR</td>
+        <td th:text="${oil['SIGUNCD']}">SIGUNCD</td>
+        <td th:text="${oil['LPG_YN']}">LPG_YN</td>
+        <td th:text="${oil['GIS_X_COOR']}">GIS_X_COOR</td>
+        <td th:text="${oil['GIS_Y_COOR']}">GIS_Y_COOR</td>
     </tr>
     </tbody>
 </table>

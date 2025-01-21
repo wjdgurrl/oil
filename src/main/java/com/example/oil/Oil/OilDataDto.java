@@ -18,7 +18,7 @@ public class OilDataDto {
             private String GPOLL_DIV_CD; // 충전소 상표
             private String OS_NM; // 상호
             private String VAM_ADR; // 지번 주소
-            private String NEW_ARD; // 도로명 주소
+            private String NEW_ADR; // 도로명 주소
             private String SIGUNCD; // 소재지 시군코드
             private String LPG_YN; // 업종구분
             private String GIS_X_COOR; // GIS X좌표
