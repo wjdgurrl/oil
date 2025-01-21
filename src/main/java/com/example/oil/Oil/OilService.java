@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Configuration
 public class OilService {
 
     @Value("${API-KEY}")
@@ -37,10 +36,10 @@ public class OilService {
     public List<Map<String, Object>> fetchOilDataAsMap(List<String> file) {
         List<Map<String, Object>> gasStationDetails = new ArrayList<>();
         // 서구 지역만 먼저 가져와 보자
-        for (String gasStationName : file){
+        for (String gasStationId : file){
             try {
-                System.out.println(gasStationName);
-                String apiUrl = "https://www.opinet.co.kr/api/searchByName.do?code=" + API_KEY + "&out=json&osnm=" + gasStationName +"&area=16";
+                System.out.println(gasStationId);
+                String apiUrl = "https://www.opinet.co.kr/api/detailById.do?code=" + API_KEY + "&id=" + gasStationId +"&out=json";
                 //System.out.println(apiUrl);
                 String response = restTemplate.getForObject(apiUrl, String.class);
 
@@ -48,7 +47,7 @@ public class OilService {
 
                 // JSON 문자열을 Map으로 변환
                 Map<String, Object> responseData = objectMapper.readValue(response, new TypeReference<Map<String, Object>>() {});
-                System.out.println("Mapped Map: " + responseData);
+                //System.out.println("Mapped Map: " + responseData);
 
                 gasStationDetails.add(responseData);
                 //System.out.println("테스트 : " + gasStationDetails);

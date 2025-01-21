@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.station-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* 가운데 정렬 유지 (또는 flex-start) */
+    gap: 20px;
+}
+
+.station-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 0 0 calc(33.33% - 20px); /* flex-grow: 0으로 변경 */
+    padding: 20px;
+    box-sizing: border-box;
+    min-width: 300px; /* 최소 너비 설정 (선택적) */
+}
+
+.station-header {
+    font-size: 20px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.station-info {
+    margin-bottom: 15px;
+}
+
+.station-info span {
+    font-weight: bold;
+    color: #666;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+table th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+}
+
+table td {
+    color: #555;
+}

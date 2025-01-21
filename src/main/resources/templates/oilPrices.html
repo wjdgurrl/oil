@@ -1,40 +1,51 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Oil Prices</title>
+    <title>주유소 정보</title>
+    <link rel='stylesheet' href='style.css'>
 </head>
 <body>
-<h1>Oil Prices</h1>
-<table border="1">
-    <thead>
-    <tr>
-        <th>주유소 코드</th>
-        <th>상표</th>
-        <th>충전소 상표</th>
-        <th>상호</th>
-        <th>지번 주소</th>
-        <th>도로명 주소</th>
-        <th>소재지 시군코드</th>
-        <th>업종구분</th>
-        <th>GIS X좌표</th>
-        <th>GIS Y좌표</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- result['OIL'] 리스트를 순회 -->
-    <tr th:each="oil : ${result['OIL']}">
-        <td th:text="${oil['UNI_ID']}">UNI_ID</td>
-        <td th:text="${oil['POLL_DIV_CD']}">POLL_DIV_CD</td>
-        <td th:text="${oil['GPOLL_DIV_CD']}">GPOLL_DIV_CD</td>
-        <td th:text="${oil['OS_NM']}">OS_NM</td>
-        <td th:text="${oil['VAN_ADR']}">VAN_ADR</td>
-        <td th:text="${oil['NEW_ADR']}">NEW_ADR</td>
-        <td th:text="${oil['SIGUNCD']}">SIGUNCD</td>
-        <td th:text="${oil['LPG_YN']}">LPG_YN</td>
-        <td th:text="${oil['GIS_X_COOR']}">GIS_X_COOR</td>
-        <td th:text="${oil['GIS_Y_COOR']}">GIS_Y_COOR</td>
-    </tr>
-    </tbody>
-</table>
+<h1>주유소 리스트</h1>
+<div class="station-container">
+    <div class="station-card" th:each="outer : ${result}">
+        <div th:if="${outer.RESULT.OIL != null}">
+            <div th:each="station : ${outer.RESULT.OIL}">
+                <div class="station-header" th:text="${station.OS_NM}">주유소 이름</div>
+                <div class="station-info">
+                    <div><span>주소:</span> <span th:text="${station.NEW_ADR}">주소</span></div>
+                    <div><span>전화번호:</span> <span th:text="${station.TEL}">전화번호</span></div>
+                </div>
+                <!-- 유류 정보 테이블 -->
+                <table>
+                    <thead>
+                    <tr>
+                        <th>유종</th>
+                        <th>가격</th>
+                        <th>상생카드 가격</th>
+                        <th>거래 날짜</th>
+                        <th>거래 시간</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="price : ${station.OIL_PRICE}">
+                        <!-- 유종 코드 조건문 -->
+                        <td th:switch="${price.PRODCD}">
+                            <span th:case="'B027'">휘발유</span>
+                            <span th:case="'D047'">경유</span>
+                            <span th:case="'B034'">고급휘발유</span>
+                            <span th:case="'C004'">실내등유</span>
+                            <span th:case="'K015'">자동차부탄</span>
+                            <span th:case="*">알 수 없음</span> </td>
+                        <td th:text="${price.PRICE}">가격</td>
+                        <td th:text="${price.PRICE - (price.PRICE * 0.03)}">상생카드 가격</td>
+                        <td th:text="${price.TRADE_DT}">거래 날짜</td>
+                        <td th:text="${price.TRADE_TM}">거래 시간</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
