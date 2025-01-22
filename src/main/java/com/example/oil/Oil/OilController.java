@@ -1,50 +1,102 @@
 package com.example.oil.Oil;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class OilController {
+
+    @Value("${API-KEY}")
+    private String API_KEY;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private OilService oilService;
 
     @GetMapping("/")
-    public String showOilPrices(Model model) {
+    public String main(){
+        return "main";
+    }
+    @GetMapping("/get")
+    public String get(Model model){
+        List<String> data = new ArrayList<>();
+        List<String> file = oilService.readFile("src/main/resources/gwangsangoo.csv");
+        for (String s : file) {
+            try {
+                String apiUrl = "https://www.opinet.co.kr/api/searchByName.do?code=" + API_KEY + "&out=json&osnm=" + s + "&area=16";
+                System.out.println(apiUrl);
+                String response = restTemplate.getForObject(apiUrl, String.class);
+                System.out.println(response);
+                data.add(response);
 
-        String filePath = "src/main/resources/seogu.csv";
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        model.addAttribute("data", data);
+        return "get";
+    }
+
+
+    @GetMapping("/oilPrice/{goo}")
+    public String showOilPrices(@PathVariable String goo, Model model) {
+
+
+        String filePath = oilService.filePath(goo);
         List<String> file = oilService.readFile(filePath);
         System.out.println(file);
 
-        List<Map<String, Object>> oilData = oilService.fetchOilDataAsMap(file);
-        List<Map<String, Object>> allOilData = new ArrayList<>();
-        //System.out.println(oilData);
-        /*for (Map<String, Object> map : oilData) {
-            try {
-                if (map == null || !map.containsKey("RESULT")) {
-                    continue;
-                }
+        List<OilDataDto> oilDataList = oilService.fetchOilDataAsMap(file);
+        List<Map<String, Object>> oilDataForView = new ArrayList<>();
+        for (OilDataDto oilData : oilDataList) {
+            if (oilData.getResult() != null && oilData.getResult().getOil() != null) {
+                for (OilDataDto.OilStation oilStation : oilData.getResult().getOil()) {
+                    if (oilStation != null) {
+                        Map<String, Object> stationData = new HashMap<>();
+                        stationData.put("OS_NM", oilStation.getOsNm());
+                        stationData.put("NEW_ADR", oilStation.getNewAdr());
+                        stationData.put("TEL", oilStation.getTel());
 
-                Map<String, Object> result = (Map<String, Object>) map.get("RESULT");
-                //System.out.println(result);
-                //System.out.println(oilList);
-                if (result != null) {
-                    allOilData.add(result); // 리스트에 모든 데이터를 추가
+                        List<Map<String, String>> priceList = new ArrayList<>();
+                        if (oilStation.getOilPrice() != null) {
+                            for (OilDataDto.OilPrice oilPrice : oilStation.getOilPrice()) {
+                                if (oilPrice != null) {
+                                    Map<String, String> priceData = new HashMap<>();
+                                    priceData.put("prodCdName",oilPrice.getProdCd());
+                                    priceData.put("price", oilPrice.getPrice());
+                                    try {
+                                        double sangsaengPrice = Double.parseDouble(oilPrice.getPrice()) * 0.97;
+                                        priceData.put("sangsaengPrice", String.format("%.0f", sangsaengPrice));
+                                    } catch (NumberFormatException e) {
+                                        priceData.put("sangsaengPrice", "가격 오류");
+                                    }
+                                    priceData.put("tradeDt", oilPrice.getTradeDt());
+                                    priceData.put("tradeTm", oilPrice.getTradeTm());
+                                    priceList.add(priceData);
+                                }
+                            }
+                        }
+                        stationData.put("oilPrice", priceList);
+                        oilDataForView.add(stationData);
+                    }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }*/
-        //System.out.println("테스트" + oilData);
-        model.addAttribute("result", oilData);
+        }
 
-        return "oilPrices"; // oilPrices.html 렌더링
+        model.addAttribute("result", oilDataForView);
+
+        return "oilPrices";
     }
 }

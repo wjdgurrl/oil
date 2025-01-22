@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Get Data</title>
+</head>
+<body>
+<h1>API Responses</h1>
+<ul>
+    <li th:each="response : ${data}" th:text="${response}"></li>
+</ul>
+</body>
+</html>

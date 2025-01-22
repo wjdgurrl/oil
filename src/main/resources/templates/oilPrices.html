@@ -1,51 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>주유소 정보</title>
-    <link rel='stylesheet' href='style.css'>
+    <meta charset="UTF-8">
+    <title>상생카드 주유소</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<h1>주유소 리스트</h1>
-<div class="station-container">
-    <div class="station-card" th:each="outer : ${result}">
-        <div th:if="${outer.RESULT.OIL != null}">
-            <div th:each="station : ${outer.RESULT.OIL}">
-                <div class="station-header" th:text="${station.OS_NM}">주유소 이름</div>
-                <div class="station-info">
-                    <div><span>주소:</span> <span th:text="${station.NEW_ADR}">주소</span></div>
-                    <div><span>전화번호:</span> <span th:text="${station.TEL}">전화번호</span></div>
-                </div>
-                <!-- 유류 정보 테이블 -->
-                <table>
-                    <thead>
-                    <tr>
-                        <th>유종</th>
-                        <th>가격</th>
-                        <th>상생카드 가격</th>
-                        <th>거래 날짜</th>
-                        <th>거래 시간</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="price : ${station.OIL_PRICE}">
-                        <!-- 유종 코드 조건문 -->
-                        <td th:switch="${price.PRODCD}">
-                            <span th:case="'B027'">휘발유</span>
-                            <span th:case="'D047'">경유</span>
-                            <span th:case="'B034'">고급휘발유</span>
-                            <span th:case="'C004'">실내등유</span>
-                            <span th:case="'K015'">자동차부탄</span>
-                            <span th:case="*">알 수 없음</span> </td>
-                        <td th:text="${price.PRICE}">가격</td>
-                        <td th:text="${price.PRICE - (price.PRICE * 0.03)}">상생카드 가격</td>
-                        <td th:text="${price.TRADE_DT}">거래 날짜</td>
-                        <td th:text="${price.TRADE_TM}">거래 시간</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+<h1 class="page-title">상생카드 주유소 리스트</h1>
+
+<!-- 주유소 데이터가 있을 경우 -->
+<div class="stations-container" th:if="${not #lists.isEmpty(result)}">
+    <div class="station-card" th:each="station : ${result}">
+        <div class="station-header" th:text="${station.OS_NM}"></div>
+        <div class="station-info">
+            <div class="station-address"><span class="label">주소:</span> <span th:text="${station.NEW_ADR}"></span></div>
+            <div class="station-phone"><span class="label">전화번호:</span> <span th:text="${station.TEL}"></span></div>
         </div>
+        <table class="oil-prices-table">
+            <thead>
+            <tr>
+                <th>유종</th>
+                <th>가격</th>
+                <th>상생카드 가격</th>
+                <th>거래 날짜</th>
+                <th>거래 시간</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="price : ${station.oilPrice}">
+                <td th:text="${price.prodCdName}"></td>
+                <td th:text="${price.price}"></td>
+                <td th:text="${price.sangsaengPrice}"></td>
+                <td th:text="${price.tradeDt}"></td>
+                <td th:text="${price.tradeTm}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+</div>
+
+<!-- 주유소 데이터가 없을 경우 -->
+<div class="no-data-message" th:unless="${not #lists.isEmpty(result)}">
+    <p>주유소 정보가 없습니다.</p>
 </div>
 </body>
 </html>

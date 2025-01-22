@@ -1,0 +1,74 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    display: flex; /* body를 flex container로 설정 */
+    flex-direction: column; /* 수직 방향으로 배치 */
+    min-height: 100vh; /* 최소 높이를 뷰포트 높이로 설정 */
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column; /* 수직 방향 배치 */
+    flex-grow: 1; /* 남는 공간을 모두 차지 */
+}
+
+.map-container {
+    height: 40vh; /* 지도 높이를 뷰포트 높이의 40%로 설정 */
+    background-color: #eee; /* 임시 배경색 */
+    display: flex;
+    justify-content: center; /* 내용 중앙 정렬 */
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* 카드 사이 간격 균등하게 분배 */
+    flex-grow: 1; /* 남는 공간을 카드 컨테이너가 차지 */
+}
+
+.station-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    box-sizing: border-box;
+    flex-basis: calc(50% - 20px); /* 각 카드 너비 50%에서 간격 제외 */
+    margin-bottom: 20px; /* 카드 아래쪽 여백 추가 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px; /*최소 높이 지정*/
+}
+
+.station-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.area {
+    font-size: 1.5em; /* 크기 조정 */
+    font-weight: bold;
+    color: #333;
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+/* ... 기존 CSS ... */
+
+.station-card {
+    /* ... 기존 스타일 ... */
+    text-decoration: none; /* 밑줄 제거 */
+    color: inherit; /* 부모 요소의 색상 상속 */
+    cursor: pointer; /* 마우스 커서 변경 */
+    display: flex; /* 내용 가운데 정렬 */
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+}
+
+.station-card:hover {
+    /* ... 기존 호버 스타일 ... */
+    background-color: #f0f0f0; /* 호버 시 배경색 변경 */
+}
