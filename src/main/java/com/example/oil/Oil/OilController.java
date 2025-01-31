@@ -89,9 +89,9 @@ public class OilController {
                         //stationData.put("GISYCOOR", oilStation.getGisYCoor());
 
                         // 2. 위도 경도만 보내기
-                        coordinates = oilService.coordinateConverter(Double.parseDouble(oilStation.getGisXCoor()),Double.parseDouble(oilStation.getGisYCoor()));
+                        /*coordinates = oilService.coordinateConverter(Double.parseDouble(oilStation.getGisXCoor()),Double.parseDouble(oilStation.getGisYCoor()));
                         stationData.put("GISXCOOR",coordinates[0]);
-                        stationData.put("GISYCOOR",coordinates[1]);
+                        stationData.put("GISYCOOR",coordinates[1]);*/
 
                         List<Map<String, String>> priceList = new ArrayList<>();
                         if (oilStation.getOilPrice() != null) {

@@ -5,6 +5,8 @@ body {
     margin: 0;
     padding: 20px;
     background-color: #f9f9f9;
+    padding-top: 70px;
+    min-height: 100vh;
 }
 
 .page-title {
@@ -103,7 +105,14 @@ body {
     justify-content: center; /* 내용 중앙 정렬 */
     align-items: center;
     margin-bottom: 20px;
-    position: relative;
+
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%; /* 화면 전체 너비를 차지하도록 설정 */
+    z-index: 1000; /* 다른 요소 위에 배치 */
+
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  /* 하단 그림자 효과 */
 }
 
 .search {
