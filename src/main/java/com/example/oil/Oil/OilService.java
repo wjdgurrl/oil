@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
+import org.locationtech.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -164,5 +166,21 @@ public class OilService {
             e.printStackTrace();
         }
         return gasList;
+    }
+
+    public double[] coordinateConverter(double gisX, double gisY){
+        double[] coordinates = new double[2];
+        System.out.println("원래 좌표 : x=" + gisX + " y=" + gisY);
+        CRSFactory factory = new CRSFactory();
+        CoordinateReferenceSystem katec  = factory.createFromName("EPSG:5171");//WGS84 좌표계
+        CoordinateReferenceSystem naverKTM  = factory.createFromName("EPSG:4326");//네이버 좌표
+        CoordinateTransform transform = new BasicCoordinateTransform(katec, naverKTM);
+        ProjCoordinate wgs84Coord = new ProjCoordinate(gisY,gisX);
+        ProjCoordinate naverCoord = new ProjCoordinate();
+        transform.transform(wgs84Coord, naverCoord);
+        coordinates[0] = naverCoord.x;
+        coordinates[1] = naverCoord.y;
+        System.out.println("KATEC → 네이버 KTM 변환 결과: X=" + coordinates[0] + ", Y=" + coordinates[1]);
+        return coordinates;
     }
 }

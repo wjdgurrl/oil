@@ -19,6 +19,9 @@ public class OilController {
     @Value("${API-KEY}")
     private String API_KEY;
 
+    @Value("${naverApiKey}")
+    private String NAVER_API_KEY;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -26,6 +29,11 @@ public class OilController {
     private OilService oilService;
 
     @GetMapping("/")
+    public String defaultOil() {
+        return "redirect:/oilPrice";
+    }
+
+    @GetMapping("/oilPrice")
     public String main(){
         return "main";
     }
@@ -53,7 +61,7 @@ public class OilController {
     @GetMapping("/oilPrice/{goo}")
     public String showOilPrices(@PathVariable String goo, Model model) {
 
-
+        double[] coordinates = new double[2];
         String filePath = oilService.filePath(goo);
         List<String> file = oilService.readFile(filePath);
         System.out.println(file);
@@ -68,6 +76,11 @@ public class OilController {
                         stationData.put("OS_NM", oilStation.getOsNm());
                         stationData.put("NEW_ADR", oilStation.getNewAdr());
                         stationData.put("TEL", oilStation.getTel());
+                        //stationData.put("GISXCOOR", oilStation.getGisXCoor());
+                        //stationData.put("GISYCOOR", oilStation.getGisYCoor());
+                        coordinates = oilService.coordinateConverter(Double.parseDouble(oilStation.getGisXCoor()),Double.parseDouble(oilStation.getGisYCoor()));
+                        stationData.put("GISXCOOR",coordinates[0]);
+                        stationData.put("GISYCOOR",coordinates[1]);
 
                         List<Map<String, String>> priceList = new ArrayList<>();
                         if (oilStation.getOilPrice() != null) {
@@ -94,7 +107,7 @@ public class OilController {
                 }
             }
         }
-
+        model.addAttribute("naverApiKey", NAVER_API_KEY);
         model.addAttribute("result", oilDataForView);
 
         return "oilPrices";

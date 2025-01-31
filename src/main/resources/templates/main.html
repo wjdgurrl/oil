@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="/main_style.css">
     <title>상생카드 주유소 찾기</title>
 </head>
 <body>
 <div class="main-container">
-    <div class="map-container">
-        <h2>지도 예정</h2>
+    <div class="map-container" id="map" style="display: flex">
+        <h1>상생카드 주유소 찾기</h1>
     </div>
+    <button class="onclick">test</button>
     <div class="card-container">
         <a th:href="@{/oilPrice/seogu}" class="station-card"> <!- 서구 링크 -->
             <h2 class="area">서구</h2>
@@ -26,4 +28,6 @@
     </div>
 </div>
 </body>
+<script>
+</script>
 </html>

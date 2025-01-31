@@ -94,3 +94,13 @@ body {
     font-size: 1.2em;
     margin-top: 30px;
 }
+
+
+.map-container {
+    height: 40vh; /* 지도 높이를 뷰포트 높이의 40%로 설정 */
+    background-color: #eee; /* 임시 배경색 */
+    display: flex;
+    justify-content: center; /* 내용 중앙 정렬 */
+    align-items: center;
+    margin-bottom: 20px;
+}
