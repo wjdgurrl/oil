@@ -35,6 +35,7 @@ public class OilController {
 
     @GetMapping("/testOil")
     public String testOil(Model model) {
+        model.addAttribute("address", "광주 서구 풍서좌로 83 (매월동)");
         model.addAttribute("naverApiKey", NAVER_API_KEY);
         return "testOil";
     }
@@ -82,8 +83,12 @@ public class OilController {
                         stationData.put("OS_NM", oilStation.getOsNm());
                         stationData.put("NEW_ADR", oilStation.getNewAdr());
                         stationData.put("TEL", oilStation.getTel());
+
+                        // 1. katec 좌표 (안됨)
                         //stationData.put("GISXCOOR", oilStation.getGisXCoor());
                         //stationData.put("GISYCOOR", oilStation.getGisYCoor());
+
+                        // 2. 위도 경도만 보내기
                         coordinates = oilService.coordinateConverter(Double.parseDouble(oilStation.getGisXCoor()),Double.parseDouble(oilStation.getGisYCoor()));
                         stationData.put("GISXCOOR",coordinates[0]);
                         stationData.put("GISYCOOR",coordinates[1]);

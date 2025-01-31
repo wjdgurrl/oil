@@ -73,48 +73,43 @@
             // 데이터에서 GIS 좌표값 가져오기
             var gisX = card.dataset.gisxcoor;
             var gisY = card.dataset.gisycoor;
-            console.log(gisX, gisY);
 
             // 좌표 값이 없는 경우 처리
-            if (gisX === null || gisY === null || gisX === "" || gisY === "") {
+            if (!gisX || !gisY) {
                 console.error("좌표 값이 없습니다.");
                 alert('좌표 정보가 없습니다.');
                 return;
             }
 
-            // 숫자로 변환 가능한지 확인
+            // 문자열을 숫자로 변환
             var parsedGisX = parseFloat(gisX);
             var parsedGisY = parseFloat(gisY);
 
-            if (isNaN(parsedGisX) || isNaN(parsedGisY) || parsedGisX < -180 || parsedGisX > 180 || parsedGisY < -90 || parsedGisY > 90) {
+            // 숫자로 변환 가능한지 확인
+            if (isNaN(parsedGisX) || isNaN(parsedGisY)) {
                 console.error("유효하지 않은 좌표 값:", gisX, gisY);
                 alert('유효하지 않은 좌표입니다.');
                 return;
             }
 
+            var position = new naver.maps.LatLng(gisY, gisX);
+            console.log("position : " + position);
 
+            // 지도 중심 이동
+            map.setCenter(position);
 
-            // 유효한 좌표인지 확인
-            if (!isNaN(gisX) && !isNaN(gisY)) {
-                var position = new naver.maps.LatLng(gisY, gisX);
-
-                // 지도 중심 이동
-                map.setCenter(position);
-
-                // 기존 마커 제거
-                if (currentMarker) {
-                    currentMarker.setMap(null);
-                }
-
-                // 새 마커 추가
-                currentMarker = new naver.maps.Marker({
-                    position: position,
-                    map: map
-                });
-            } else {
-                alert('유효하지 않은 좌표입니다.');
+            // 기존 마커 제거
+            if (window.currentMarker) {
+                window.currentMarker.setMap(null);
             }
+
+            // 새 마커 추가
+            window.currentMarker = new naver.maps.Marker({
+                position: position,
+                map: map
+            });
         });
     });
+    naver.maps.onJSContentLoaded = initGeocoder;
 </script>
 </html>

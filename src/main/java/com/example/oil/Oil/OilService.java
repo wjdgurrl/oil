@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 @Service
 public class OilService {
 
@@ -168,19 +169,30 @@ public class OilService {
         return gasList;
     }
 
+    private static final CRSFactory factory = new CRSFactory();
+    private static final CoordinateReferenceSystem katec = factory.createFromName("EPSG:2097");
+    private static final CoordinateReferenceSystem wgs84 = factory.createFromName("EPSG:4326");
+    private static final CoordinateTransform transform = new BasicCoordinateTransform(katec, wgs84);
+
     public double[] coordinateConverter(double gisX, double gisY){
+        if (Double.isNaN(gisX) || Double.isNaN(gisY) || Double.isInfinite(gisX) || Double.isInfinite(gisY)) {
+            throw new IllegalArgumentException("잘못된 좌표 값: x=" + gisX + ", y=" + gisY);
+        }
         double[] coordinates = new double[2];
         System.out.println("원래 좌표 : x=" + gisX + " y=" + gisY);
-        CRSFactory factory = new CRSFactory();
-        CoordinateReferenceSystem katec  = factory.createFromName("EPSG:5171");//WGS84 좌표계
-        CoordinateReferenceSystem naverKTM  = factory.createFromName("EPSG:4326");//네이버 좌표
-        CoordinateTransform transform = new BasicCoordinateTransform(katec, naverKTM);
-        ProjCoordinate wgs84Coord = new ProjCoordinate(gisY,gisX);
-        ProjCoordinate naverCoord = new ProjCoordinate();
-        transform.transform(wgs84Coord, naverCoord);
-        coordinates[0] = naverCoord.x;
-        coordinates[1] = naverCoord.y;
-        System.out.println("KATEC → 네이버 KTM 변환 결과: X=" + coordinates[0] + ", Y=" + coordinates[1]);
+
+        //katec -> wgs84
+        ProjCoordinate katecCoord = new ProjCoordinate(gisX,gisY);
+        ProjCoordinate wgs84Coord = new ProjCoordinate();
+        transform.transform(katecCoord, wgs84Coord);
+
+        coordinates[0] = wgs84Coord.x;
+        coordinates[1] = wgs84Coord.y;
+        System.out.println("KATEC → wgs84변환 결과: X=" + coordinates[0] + ", Y=" + coordinates[1]);
         return coordinates;
+
+
+
     }
+
 }

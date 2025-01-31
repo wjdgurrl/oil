@@ -6,11 +6,22 @@
     <title>Title</title>
     <link rel="stylesheet" href="/style.css">
     <script type="text/javascript" th:src="'https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=' + ${naverApiKey} + '&submodules=geocoder'"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
 <div class="map-container" id="map">
+    <div class="search">
+        <input id="address" type="text" placeholder="검색할 주소" value="불정로 6">
+        <input id="submit" type="button" value="주소 검색">
+    </div>
     <h1>상생카드 주유소 찾기</h1>
+</div>
+
+<div class="stations-container">
+    <div class="station-card" th:data-address="${address}">
+        <span th:text="${address}">주소</span>
+    </div>
 </div>
 
 <script>
@@ -107,6 +118,12 @@
     function initGeocoder() {
         map.addListener('click', function(e) {
             searchCoordinateToAddress(e.coord);
+        });
+
+        // station-card 클릭 이벤트
+        $('.station-card').on('click', function() {
+            var address = $(this).data('address');  // 클릭한 카드의 data-address 값을 가져옴
+            searchAddressToCoordinate(address);  // 주소로 좌표 검색
         });
 
         $('#address').on('keydown', function(e) {
