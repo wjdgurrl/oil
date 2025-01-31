@@ -18,7 +18,8 @@
 <!-- 주유소 데이터가 있을 경우 -->
 <div class="stations-container" th:if="${not #lists.isEmpty(result)}">
     <div class="station-card" th:each="station : ${result}"
-         th:data-address="${station.NEW_ADR}">
+         th:data-gisxcoor="${station.GISXCOOR}"
+         th:data-gisycoor="${station.GISYCOOR}">
         <div class="station-header" th:text="${station.OS_NM}"></div>
         <div class="station-info">
             <div class="station-address"><span class="label">주소:</span> <span th:text="${station.NEW_ADR}"></span></div>
@@ -56,158 +57,40 @@
 </body>
 
 <script>
-    var map = new naver.maps.Map("map", {
-        center: new naver.maps.LatLng(37.3595316, 127.1052133),
-        zoom: 15,
-        mapTypeControl: true
-    });
+    // 지도 초기화
+    var mapOptions = {
+        center: new naver.maps.LatLng(37.3595704, 127.105399), // 기본 지도 중심
+        zoom: 10
+    };
+    var map = new naver.maps.Map('map', mapOptions);
 
-    var infoWindow = new naver.maps.InfoWindow({
-        anchorSkew: true
-    });
+    // 기존 마커를 저장하기 위한 변수
+    var currentMarker = null;
 
-    map.setCursor('pointer');
-
-    function searchAddressToCoordinate(address) {
-        naver.maps.Service.geocode({
-            query: address
-        }, function(status, response) {
-            if (status === naver.maps.Service.Status.ERROR) {
-                return alert('Something Wrong!');
-            }
-
-            if (response.v2.meta.totalCount === 0) {
-                return alert('totalCount' + response.v2.meta.totalCount);
-            }
-
-            var htmlAddresses = [],
-                item = response.v2.addresses[0],
-                point = new naver.maps.Point(item.x, item.y);
-
-            if (item.roadAddress) {
-                htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
-            }
-
-            if (item.jibunAddress) {
-                htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
-            }
-
-            if (item.englishAddress) {
-                htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
-            }
-
-            infoWindow.setContent([
-                '<div style="padding:10px;min-width:200px;line-height:150%;">',
-                '<h4 style="margin-top:5px;">검색 주소 : '+ address +'</h4><br />',
-                htmlAddresses.join('<br />'),
-                '</div>'
-            ].join('\n'));
-
-            map.setCenter(point);
-            infoWindow.open(map, point);
-        });
-    }
-
-    function initGeocoder() {
-        map.addListener('click', function(e) {
-            searchCoordinateToAddress(e.coord);
-        });
-
-        $('#address').on('keydown', function(e) {
-            var keyCode = e.which;
-
-            if (keyCode === 13) { // Enter Key
-                searchAddressToCoordinate($('#address').val());
-            }
-        });
-
-        $('#submit').on('click', function(e) {
-            e.preventDefault();
-
-            searchAddressToCoordinate($('#address').val());
-        });
-
-        searchAddressToCoordinate('정자동 178-1');
-    }
-
-    function makeAddress(item) {
-        if (!item) {
-            return;
-        }
-
-        var name = item.name,
-            region = item.region,
-            land = item.land,
-            isRoadAddress = name === 'roadaddr';
-
-        var sido = '', sigugun = '', dongmyun = '', ri = '', rest = '';
-
-        if (hasArea(region.area1)) {
-            sido = region.area1.name;
-        }
-
-        if (hasArea(region.area2)) {
-            sigugun = region.area2.name;
-        }
-
-        if (hasArea(region.area3)) {
-            dongmyun = region.area3.name;
-        }
-
-        if (hasArea(region.area4)) {
-            ri = region.area4.name;
-        }
-
-        if (land) {
-            if (hasData(land.number1)) {
-                if (hasData(land.type) && land.type === '2') {
-                    rest += '산';
-                }
-
-                rest += land.number1;
-
-                if (hasData(land.number2)) {
-                    rest += ('-' + land.number2);
-                }
-            }
-
-            if (isRoadAddress === true) {
-                if (checkLastString(dongmyun, '면')) {
-                    ri = land.name;
-                } else {
-                    dongmyun = land.name;
-                    ri = '';
-                }
-
-                if (hasAddition(land.addition0)) {
-                    rest += ' ' + land.addition0.value;
-                }
-            }
-        }
-
-        return [sido, sigugun, dongmyun, ri, rest].join(' ');
-    }
-
-    function hasArea(area) {
-        return !!(area && area.name && area.name !== '');
-    }
-
-    function hasData(data) {
-        return !!(data && data !== '');
-    }
-
-    function checkLastString (word, lastString) {
-        return new RegExp(lastString + '$').test(word);
-    }
-
-    function hasAddition (addition) {
-        return !!(addition && addition.value);
-    }
-
-    naver.maps.onJSContentLoaded = initGeocoder;
-    /*// station-card를 클릭했을 때 지도에 마커 추가
+    // station-card를 클릭했을 때 지도에 마커 추가
     document.querySelectorAll('.station-card').forEach(function (card) {
         card.addEventListener('click', function () {
+            // 데이터에서 GIS 좌표값 가져오기
+            var gisX = card.dataset.gisxcoor;
+            var gisY = card.dataset.gisycoor;
+            console.log(gisX, gisY);
+
+            // 좌표 값이 없는 경우 처리
+            if (gisX === null || gisY === null || gisX === "" || gisY === "") {
+                console.error("좌표 값이 없습니다.");
+                alert('좌표 정보가 없습니다.');
+                return;
+            }
+
+            // 숫자로 변환 가능한지 확인
+            var parsedGisX = parseFloat(gisX);
+            var parsedGisY = parseFloat(gisY);
+
+            if (isNaN(parsedGisX) || isNaN(parsedGisY) || parsedGisX < -180 || parsedGisX > 180 || parsedGisY < -90 || parsedGisY > 90) {
+                console.error("유효하지 않은 좌표 값:", gisX, gisY);
+                alert('유효하지 않은 좌표입니다.');
+                return;
+            }
 
 
 
@@ -232,8 +115,6 @@
                 alert('유효하지 않은 좌표입니다.');
             }
         });
-    });*/
-
-
+    });
 </script>
 </html>

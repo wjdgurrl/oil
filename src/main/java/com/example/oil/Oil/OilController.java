@@ -33,6 +33,12 @@ public class OilController {
         return "redirect:/oilPrice";
     }
 
+    @GetMapping("/testOil")
+    public String testOil(Model model) {
+        model.addAttribute("naverApiKey", NAVER_API_KEY);
+        return "testOil";
+    }
+
     @GetMapping("/oilPrice")
     public String main(){
         return "main";
