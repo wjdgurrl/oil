@@ -10,10 +10,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<h1 class="page-title">상생카드 주유소 리스트</h1>
-<div class="map-container" id="map">
-    <h1>상생카드 주유소 찾기</h1>
+<h1 class="page-title">
+    <a href="/" class="back">뒤로가기</a>
+    상생카드 주유소 리스트
+</h1>
+<div class="map-wrapper">
+    <div class="map-container" id="map">
+        <h1>상생카드 주유소 찾기</h1>
+    </div>
 </div>
+
 
 <!-- 주유소 데이터가 있을 경우 -->
 <div class="stations-container" th:if="${not #lists.isEmpty(result)}">
@@ -58,15 +64,266 @@
 </body>
 
 <script>
+
+    const mapElement = document.getElementById("map");
+    console.log(getComputedStyle(mapElement).position);
+
+    var locationBtnHtml = '<a naver.maps.Event.once(map, \'init\', function() {\n' +
+        '        //customControl 객체 이용하기\n' +
+        '        var customControl = new naver.maps.CustomControl(locationBtnHtml, {\n' +
+        '            position: naver.maps.Position.TOP_LEFT\n' +
+        '        });\n' +
+        '\n' +
+        '        customControl.setMap(map);\n' +
+        '\n' +
+        '        naver.maps.Event.addDOMListener(customControl.getElement(), \'click\', function() {\n' +
+        '            onSuccessGeolocation(position);\n' +
+        '        });\n' +
+        '    });\n' +
+        '\n' +
+        '    //현재 위치\n' +
+        '    function onSuccessGeolocation(position) {\n' +
+        '        var location = new naver.maps.LatLng(position.coords.latitude,\n' +
+        '            position.coords.longitude);\n' +
+        '\n' +
+        '        /*map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.\n' +
+        '        map.setZoom(16); // 지도의 줌 레벨을 변경합니다.\n' +
+        '        marker.setPosition(location);*/\n' +
+        '        if (!myMarker) {\n' +
+        '            // 마커 이미지 설정\n' +
+        '            const markerImage = {\n' +
+        '                url: \'/images/car.png\', // 현재 위치 마커 이미지 URL\n' +
+        '                size: new naver.maps.Size(33, 33),\n' +
+        '                origin: new naver.maps.Point(0, 0),\n' +
+        '                anchor: new naver.maps.Point(15, 15)\n' +
+        '            };\n' +
+        '\n' +
+        '            myMarker = new naver.maps.Marker({\n' +
+        '                position: location,\n' +
+        '                map: map,\n' +
+        '                icon: markerImage // 마커 이미지 설정\n' +
+        '            });\n' +
+        '        } else {\n' +
+        '            myMarker.setPosition(location);\n' +
+        '        }\n' +
+        '\n' +
+        '        map.setCenter(location);\n' +
+        '        map.setZoom(16);\n' +
+        '\n' +
+        '    }href="#" class="btn_mylct"><span class="spr_trff spr_ico_mylct">내 위치</span></a>';
+
     var map = new naver.maps.Map("map", {
         center: new naver.maps.LatLng(37.3595316, 127.1052133),
         zoom: 16,
         mapTypeControl: true
     });
 
+
+
+    let myMarker;
+
     var infoWindow = new naver.maps.InfoWindow({
         anchorSkew: true
     });
+    var markers = [];
+
+    // 주유소 위치를 모두 표시하는 함수
+    function addStationMarkers() {
+        $('.station-card').each(function() {
+            var address = $(this).data('address');
+            var name = $(this).data('name');
+            var cardElement = $(this);  // 해당 카드 요소 저장
+
+            // 유가 정보 수집
+            var oilPrices = [];
+            $(this).find('tr').each(function() {
+                var prodCdName = $(this).attr('data-prodCdName');
+                var price = $(this).attr('data-price');
+                var sangsaengPrice = $(this).attr('data-sangsaengPrice');
+
+                if (prodCdName && price && sangsaengPrice) {
+                    oilPrices.push({
+                        prodCdName: prodCdName,
+                        price: price,
+                        sangsaengPrice: sangsaengPrice
+                    });
+                }
+            });
+
+            // 주소를 좌표로 변환하여 마커 추가
+            naver.maps.Service.geocode({
+                query: address
+            }, function(status, response) {
+                if (status === naver.maps.Service.Status.ERROR) {
+                    return console.error('주소 변환 오류:', address);
+                }
+                if (response.v2.meta.totalCount === 0) {
+                    return console.warn('주소 좌표 없음:', address);
+                }
+
+                var item = response.v2.addresses[0],
+                    point = new naver.maps.LatLng(item.y, item.x); // 네이버 좌표계 (y, x 순서)
+
+                // 마커 생성
+                var marker = new naver.maps.Marker({
+                    position: point,
+                    map: map,
+                    title: name
+                });
+
+                // 마커 클릭 시 정보창 표시
+                naver.maps.Event.addListener(marker, 'click', function() {
+                    showInfoWindow(marker, name, oilPrices);
+                    highlightCard(cardElement); // 카드 강조 효과
+                });
+
+                markers.push(marker); // 마커 저장
+            });
+        });
+    }
+
+    // 정보창 표시 함수
+    function showInfoWindow(marker, name, oilPrices) {
+        var priceInfoHtml = `
+            <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="padding:5px; background-color:#f1f1f1;">유종</th>
+                        <th style="padding:5px; background-color:#f1f1f1;">일반 가격</th>
+                        <th style="padding:5px; background-color:#f1f1f1;">상생카드 가격</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${oilPrices.map(oil => `
+                        <tr>
+                            <td style="padding:5px;">${oil.prodCdName}</td>
+                            <td style="padding:5px;">${oil.price}원</td>
+                            <td style="padding:5px;">${oil.sangsaengPrice}원</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+        var infoWindowContent = `
+            <div style="padding:10px; min-width:250px; line-height:150%;">
+                <h4 style="margin-top:5px; text-align:center;">${name}</h4>
+                ${priceInfoHtml}
+            </div>
+        `;
+
+        infoWindow.setContent(infoWindowContent);
+        infoWindow.open(map, marker);
+    }
+
+    // 카드 강조 효과 함수
+    function highlightCard(selectedCard) {
+        $('.station-card').css({
+            'opacity': '1', // 기본 투명도
+            'background-color': '' // 원래 색상 복귀
+        });
+
+        selectedCard.css({
+            'opacity': '0.7', // 클릭한 카드만 투명하게
+            'background-color': '#f0f0f0' // 클릭한 카드 배경 변경
+        });
+    }
+
+    // 페이지 로드 후 주유소 마커 추가
+    $(document).ready(function() {
+        addStationMarkers();
+    });
+
+    /*var marker = new naver.maps.Marker({
+        position: map.getCenter(), // 기본 위치
+        map: map,
+        title: "현재 위치"
+    });*/
+
+    naver.maps.Event.once(map, 'init', function() {
+        //customControl 객체 이용하기
+        var customControl = new naver.maps.CustomControl(locationBtnHtml, {
+            position: naver.maps.Position.TOP_LEFT
+        });
+
+        customControl.setMap(map);
+
+        naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function() {
+            // Geolocation API를 사용하여 현재 위치를 가져오는 함수
+            function getCurrentLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
+                } else {
+                    alert("이 브라우저에서는 Geolocation API를 사용할 수 없습니다.");
+                }
+            }
+
+            // customControl 클릭 이벤트 리스너 수정
+            naver.maps.Event.addDOMListener(customControl.getElement(), 'click', getCurrentLocation);
+
+        });
+    });
+
+    //현재 위치
+    function onSuccessGeolocation(position) {
+        var location = new naver.maps.LatLng(position.coords.latitude,
+            position.coords.longitude);
+
+        /*map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
+        map.setZoom(16); // 지도의 줌 레벨을 변경합니다.
+        marker.setPosition(location);*/
+        if (!myMarker) {
+            // 마커 이미지 설정
+            const markerImage = {
+                url: '/images/car.png', // 현재 위치 마커 이미지 URL
+                size: new naver.maps.Size(33, 33),
+                origin: new naver.maps.Point(0, 0),
+                anchor: new naver.maps.Point(15, 15)
+            };
+
+            myMarker = new naver.maps.Marker({
+                position: location,
+                map: map,
+                icon: markerImage // 마커 이미지 설정
+            });
+        } else {
+            myMarker.setPosition(location);
+        }
+
+        map.setCenter(location);
+        map.setZoom(16);
+
+    }
+
+
+
+
+    function onErrorGeolocation() {
+        var center = map.getCenter();
+
+        infowindow.setContent('<div style="padding:20px;">' +
+            '<h5 style="margin-bottom:5px;color:#f00;">Geolocation failed!</h5>'+ "latitude: "+ center.lat() +"<br />longitude: "+ center.lng() +'</div>');
+
+        infowindow.open(map, center);
+    }
+
+    $(window).on("load", function() {
+        if (navigator.geolocation) {
+            /**
+             * navigator.geolocation 은 Chrome 50 버젼 이후로 HTTP 환경에서 사용이 Deprecate 되어 HTTPS 환경에서만 사용 가능 합니다.
+             * http://localhost 에서는 사용이 가능하며, 테스트 목적으로, Chrome 의 바로가기를 만들어서 아래와 같이 설정하면 접속은 가능합니다.
+             * chrome.exe --unsafely-treat-insecure-origin-as-secure="http://example.com"
+             */
+            navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
+        } else {
+            var center = map.getCenter();
+            infowindow.setContent('<div style="padding:20px;"><h5 style="margin-bottom:5px;color:#f00;">Geolocation not supported</h5></div>');
+            infowindow.open(map, center);
+        }
+    });
+
+
+
 
     function searchAddressToCoordinate(address,name,oilPrices) {
         naver.maps.Service.geocode({
@@ -126,6 +383,7 @@
         $('.station-card').on('click', function() {
             var address = $(this).data('address');  // 클릭한 카드의 data-address 값을 가져옴
             var name = $(this).data('name');
+            var cardElement = $(this);
 
             //유가 정보
             var oilPrices = [];
@@ -143,10 +401,11 @@
                 }
             });
             searchAddressToCoordinate(address, name, oilPrices);  // 주소로 좌표 검색
+            highlightCard(cardElement); // 카드 강조 효과
         });
 
         //시작 위치
-        searchAddressToCoordinate('광주광역시 서구 내방로 111', '광주광역시청',[]);
+        //searchAddressToCoordinate('광주광역시 서구 내방로 111', '광주광역시청',[]);
     }
 
     function makeAddress(item) {

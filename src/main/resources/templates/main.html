@@ -8,10 +8,15 @@
 </head>
 <body>
 <div class="main-container">
-    <div class="map-container" id="map" style="display: flex">
-        <h1>상생카드 주유소 찾기</h1>
+    <div class="title-container">
+        <h1 class="title">
+            상생카드 주유소 찾기
+        </h1>
+        <a href="/credit" class="credit" >
+            <img src="/images/pomeranian.png" class="image" alt="credit">
+        </a>
     </div>
-    <a th:href="@{/testOil}">test</a>
+    <!--<a th:href="@{/testOil}">test</a>-->
     <div class="card-container">
         <a th:href="@{/oilPrice/seogu}" class="station-card"> <!- 서구 링크 -->
             <h2 class="area">서구</h2>

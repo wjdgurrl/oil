@@ -5,13 +5,34 @@ body {
     margin: 0;
     padding: 20px;
     background-color: #f9f9f9;
-    padding-top: 70px;
+    padding-top: 10px;
     min-height: 100vh;
+}
+.back {
+    position: absolute;
+    left: 10px;
+    background-color: #4CAF50; /* 녹색 배경 */
+    border: none; /* 테두리 제거 */
+    color: white; /* 흰색 글씨 */
+    padding: 5px 20px; /* 위아래 5px, 좌우 20px 패딩 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    text-decoration: none; /* 링크 밑줄 제거 */
+    display: inline-block; /* 인라인 블록 요소로 만들기 */
+    font-size: 16px; /* 글씨 크기 */
+    margin: 2px 2px; /* 위아래 2px, 좌우 2px 마진 */
+    cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
+    border-radius: 5px; /* 버튼 모서리 둥글게 만들기 */
+}
+
+.back {
+    background-color: #45a049; /* 마우스 호버 시 약간 어두운 녹색으로 변경 */
 }
 
 .page-title {
+    position: relative;
+    margin-left: 2px;
     text-align: center;
-    font-size: 2em;
+    font-size: 1.5em;
     margin-bottom: 20px;
     color: #333;
 }
@@ -24,6 +45,8 @@ body {
     justify-content: center;
     margin: 0 auto;
     max-width: 1200px; /* 최대 너비 제한 */
+    margin-top: 2px; /* 지도와 리스트 사이 간격 */
+    padding-top: 5vh; /* 지도 높이만큼 여백 추가 */
 }
 
 /* 개별 주유소 카드 스타일 */
@@ -97,22 +120,30 @@ body {
     margin-top: 30px;
 }
 
-
-.map-container {
-    height: 40vh; /* 지도 높이를 뷰포트 높이의 40%로 설정 */
-    background-color: #eee; /* 임시 배경색 */
-    display: flex;
-    justify-content: center; /* 내용 중앙 정렬 */
-    align-items: center;
-    margin-bottom: 20px;
-
+.map-wrapper {
     position: sticky;
     top: 0;
     left: 0;
-    width: 100%; /* 화면 전체 너비를 차지하도록 설정 */
-    z-index: 1000; /* 다른 요소 위에 배치 */
+    width: 100%;
+    z-index: 1000;
+    background-color: #eee; /* 배경색 추가 */
+}
 
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  /* 하단 그림자 효과 */
+.map-container {
+    height: 40vh; /* 뷰포트 높이의 40% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
+@media (min-width: 768px) { /* 화면 너비가 768px 이상일 때 */
+    .area {
+        font-size: 50px; /* 더 큰 크기 */
+    }
 }
 
 .search {
@@ -121,3 +152,38 @@ body {
     left: 0;
     z-index: 1; /* 다른 요소들보다 위에 표시 */
 }
+
+@media screen and (max-width: 768px) {
+    /* 지도 높이 줄이기 */
+    .map-container {
+        height: 30vh; /* 모바일에서 30% 높이 */
+    }
+
+    /* 주유소 카드 한 줄에 1~2개 */
+    .station-card {
+        width: calc(50% - 15px); /* 한 줄에 2개 */
+    }
+
+    /* 더 작은 화면에서는 한 줄에 1개 */
+    @media screen and (max-width: 480px) {
+        .station-card {
+            width: 100%; /* 한 줄에 하나 */
+        }
+    }
+
+    /* 리스트 여백 조정 */
+    .stations-container {
+        padding-top: 3vh; /* 지도와의 간격 조정 */
+    }
+
+    /* 글씨 크기 조정 */
+    .station-header {
+        font-size: 1em; /* 주유소 이름 크기 축소 */
+    }
+
+    .station-info {
+        font-size: 0.8em; /* 세부 정보 크기 축소 */
+    }
+}
+
+

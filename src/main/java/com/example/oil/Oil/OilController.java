@@ -33,6 +33,11 @@ public class OilController {
         return "redirect:/oilPrice";
     }
 
+    @GetMapping("/credit")
+    public String credit() {
+        return "credit";
+    }
+
     @GetMapping("/testOil")
     public String testOil(Model model) {
         model.addAttribute("address", "광주 서구 풍서좌로 83 (매월동)");
