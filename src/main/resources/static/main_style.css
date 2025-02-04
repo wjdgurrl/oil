@@ -107,6 +107,13 @@ body {
     border-radius: 5px; /* 버튼 모서리 둥글게 만들기 */
 }
 
-.back {
+.back.hover {
     background-color: #45a049; /* 마우스 호버 시 약간 어두운 녹색으로 변경 */
+}
+
+
+@media screen and (max-width: 768px) {
+    .station-card {
+        width: 100%; /* 한 줄에 하나만 배치 */
+    }
 }

@@ -13,6 +13,14 @@
 <h1 class="page-title">
     <a href="/" class="back">뒤로가기</a>
     상생카드 주유소 리스트
+    <select id="oilTypeSelector">
+        <option value="none">유종 선택</option>
+        <option value="휘발유">휘발유</option>
+        <option value="경유">경유</option>
+        <option value="고급휘발유">고급 휘발유</option>
+        <option value="실내등유">실내 등유</option>
+    </select>
+
 </h1>
 <div class="map-wrapper">
     <div class="map-container" id="map">
@@ -48,7 +56,7 @@
             th:data-sangsaengPrice="${price.sangsaengPrice}">
                 <td th:text="${price.prodCdName}"></td>
                 <td th:text="${price.price}"></td>
-                <td th:text="${price.sangsaengPrice}"></td>
+                <td style="font-size: 16px" th:text="${price.sangsaengPrice}"></td>
                 <td th:text="${price.tradeDt}"></td>
                 <td th:text="${price.tradeTm}"></td>
             </tr>
@@ -64,6 +72,61 @@
 </body>
 
 <script>
+
+    $(document).ready(function() {
+        // 드롭다운 변경 시 최저가 강조
+        $('#oilTypeSelector').change(function() {
+            let selectedOilType = $(this).val();
+            highlightCheapestPrices(selectedOilType);
+        });
+    });
+
+    function highlightCheapestPrices(oilType) {
+        if (!oilType) return; // 유종 미선택 시 종료
+
+        let cheapestPrice = null;
+
+        // 각 주유소마다 최저가를 찾아냄
+        $('.station-card').each(function() {
+            let stationElement = $(this);  // station-card 요소
+            let stationPrices = stationElement.find('tr');  // 각 주유소의 가격 목록
+
+            // 해당 주유소의 유종별 최저가 찾기
+            stationPrices.each(function() {
+                let oilTypeInRow = $(this).find('td:first').text().trim();  // 유종
+                let sangsaengPrice = parseInt($(this).find('td:nth-child(3)').text().trim().replace(',', '').replace('원', ''));
+
+                if (oilTypeInRow === oilType && !isNaN(sangsaengPrice)) {
+                    // 최저가 계산
+                    if (cheapestPrice === null || sangsaengPrice < cheapestPrice) {
+                        cheapestPrice = sangsaengPrice;
+                    }
+                }
+            });
+        });
+
+        // 최저가 배경색 적용
+        $('.station-card').each(function() {
+            let stationElement = $(this);  // station-card 요소
+            let stationPrices = stationElement.find('tr');  // 각 주유소의 가격 목록
+
+            stationPrices.each(function() {
+                let oilTypeInRow = $(this).find('td:first').text().trim();  // 유종
+                let sangsaengPrice = parseInt($(this).find('td:nth-child(3)').text().trim().replace(',', '').replace('원', ''));
+
+                if (oilTypeInRow === oilType && !isNaN(sangsaengPrice)) {
+                    if (sangsaengPrice === cheapestPrice) {
+                        $(this).css('background-color', '#ffeb3b');  // 최저가에 노란색 배경색
+                    } else {
+                        $(this).css('background-color', '');  // 기본값 복원
+                    }
+                }
+                else{
+                    $(this).css('background-color', '');  // 기본값 복원
+                }
+            });
+        });
+    }
 
     const mapElement = document.getElementById("map");
     console.log(getComputedStyle(mapElement).position);
@@ -110,15 +173,15 @@
         '        map.setCenter(location);\n' +
         '        map.setZoom(16);\n' +
         '\n' +
-        '    }href="#" class="btn_mylct"><span class="spr_trff spr_ico_mylct">내 위치</span></a>';
+        '    }href="#" class="btn_mylct" style="display: inline-block; padding: 1px 2px; background-color: #007bff; color: white; text-align: center; text-decoration: none; border-radius: 5px; border: inline-block; cursor: pointer; font-size: 13px;">' +
+        '<span class="spr_trff spr_ico_mylct">내 위치</span>' +
+        '</a>';
 
     var map = new naver.maps.Map("map", {
         center: new naver.maps.LatLng(37.3595316, 127.1052133),
         zoom: 16,
         mapTypeControl: true
     });
-
-
 
     let myMarker;
 
@@ -134,21 +197,6 @@
             var name = $(this).data('name');
             var cardElement = $(this);  // 해당 카드 요소 저장
 
-            // 유가 정보 수집
-            var oilPrices = [];
-            $(this).find('tr').each(function() {
-                var prodCdName = $(this).attr('data-prodCdName');
-                var price = $(this).attr('data-price');
-                var sangsaengPrice = $(this).attr('data-sangsaengPrice');
-
-                if (prodCdName && price && sangsaengPrice) {
-                    oilPrices.push({
-                        prodCdName: prodCdName,
-                        price: price,
-                        sangsaengPrice: sangsaengPrice
-                    });
-                }
-            });
 
             // 주소를 좌표로 변환하여 마커 추가
             naver.maps.Service.geocode({
@@ -173,8 +221,11 @@
 
                 // 마커 클릭 시 정보창 표시
                 naver.maps.Event.addListener(marker, 'click', function() {
-                    showInfoWindow(marker, name, oilPrices);
+                    //showInfoWindow(marker, name, oilPrices);
+                    map.setCenter(marker.getPosition());
                     highlightCard(cardElement); // 카드 강조 효과
+
+                    cardElement[0].scrollIntoView({ behavior: "smooth", block: "center" });
                 });
 
                 markers.push(marker); // 마커 저장
@@ -188,17 +239,17 @@
             <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
                 <thead>
                     <tr>
-                        <th style="padding:5px; background-color:#f1f1f1;">유종</th>
-                        <th style="padding:5px; background-color:#f1f1f1;">일반 가격</th>
-                        <th style="padding:5px; background-color:#f1f1f1;">상생카드 가격</th>
+                        <th style="padding:3px; background-color:#f1f1f1;">유종</th>
+                        <th style="padding:3px; background-color:#f1f1f1;">일반 가격</th>
+                        <th style="padding:3px; background-color:#f1f1f1;">상생카드 가격</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${oilPrices.map(oil => `
                         <tr>
-                            <td style="padding:5px;">${oil.prodCdName}</td>
-                            <td style="padding:5px;">${oil.price}원</td>
-                            <td style="padding:5px;">${oil.sangsaengPrice}원</td>
+                            <td style="padding:3px;">${oil.prodCdName}</td>
+                            <td style="padding:3px;">${oil.price}원</td>
+                            <td style="padding:3px;">${oil.sangsaengPrice}원</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -325,7 +376,7 @@
 
 
 
-    function searchAddressToCoordinate(address,name,oilPrices) {
+    function searchAddressToCoordinate(address,name) {
         naver.maps.Service.geocode({
             query: address
         }, function(status, response) {
@@ -340,37 +391,10 @@
             var item = response.v2.addresses[0],
                 point = new naver.maps.Point(item.x, item.y);
 
-            var priceInfoHtml = `
-            <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <th style="padding:5px; background-color:#f1f1f1;">유종</th>
-                        <th style="padding:5px; background-color:#f1f1f1;">일반 가격</th>
-                        <th style="padding:5px; background-color:#f1f1f1;">상생카드 가격</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${oilPrices.map(oil => `
-                        <tr>
-                            <td style="padding:5px;">${oil.prodCdName}</td>
-                            <td style="padding:5px;">${oil.price}원</td>
-                            <td style="padding:5px;">${oil.sangsaengPrice}원</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
 
-            var infoWindowContent = `
-            <div style="padding:10px; min-width:250px; line-height:150%;">
-                <h4 style="margin-top:5px; text-align:center;">${name}</h4>
-                ${priceInfoHtml}
-            </div>
-        `;
-
-            infoWindow.setContent(infoWindowContent);
+            //infoWindow.setContent(infoWindowContent);
             map.setCenter(point);
-            infoWindow.open(map, point);
+            //infoWindow.open(map, point);
         });
     }
 
@@ -386,7 +410,7 @@
             var cardElement = $(this);
 
             //유가 정보
-            var oilPrices = [];
+            /*var oilPrices = [];
             $(this).find('tr').each(function() {
                 var prodCdName = $(this).attr('data-prodCdName');
                 var price = $(this).attr('data-price');
@@ -399,8 +423,8 @@
                      sangsaengPrice: sangsaengPrice
                  });
                 }
-            });
-            searchAddressToCoordinate(address, name, oilPrices);  // 주소로 좌표 검색
+            });*/
+            searchAddressToCoordinate(address, name);  // 주소로 좌표 검색
             highlightCard(cardElement); // 카드 강조 효과
         });
 

@@ -8,6 +8,8 @@ body {
     padding-top: 10px;
     min-height: 100vh;
 }
+
+
 .back {
     position: absolute;
     left: 10px;
@@ -120,6 +122,7 @@ body {
     margin-top: 30px;
 }
 
+
 .map-wrapper {
     position: sticky;
     top: 0;
@@ -130,7 +133,7 @@ body {
 }
 
 .map-container {
-    height: 40vh; /* 뷰포트 높이의 40% */
+    height: 36vh; /* 뷰포트 높이의 40% */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -153,7 +156,14 @@ body {
     z-index: 1; /* 다른 요소들보다 위에 표시 */
 }
 
+
+
 @media screen and (max-width: 768px) {
+
+    .oil-prices-table{
+        font-size: 12px;
+    }
+
     /* 지도 높이 줄이기 */
     .map-container {
         height: 30vh; /* 모바일에서 30% 높이 */
