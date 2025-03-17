@@ -6,19 +6,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Resource;
 import lombok.Getter;
 import lombok.Setter;
 import org.locationtech.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
@@ -42,19 +42,20 @@ public class OilService {
         String file=" ";
         switch (goo){
             case "seogu" :
-                file = "src/main/resources/seogu.csv";
+                file = "seogu.csv";
                 break;
             case "bukgoo" :
-                file = "src/main/resources/bukgoo.csv";
+                file = "bukgoo.csv";
                 break;
             case "namgoo" :
-                file = "src/main/resources/namgoo.csv";
+                file = "namgoo.csv";
                 break;
             case "gwangsangoo" :
-                file = "src/main/resources/gwangsangoo.csv";
+                file = "gwangsangoo.csv";
                 break;
             default:
                 System.out.println("file not found");
+                return null;
         }
         return file;
     }
@@ -158,7 +159,10 @@ public class OilService {
     public List<String> readFile(String filePath){
         List<String> gasList = new ArrayList<>();
 
-        try(BufferedReader br = new BufferedReader(new FileReader(filePath))){
+        try{
+            ClassPathResource resource = new ClassPathResource(filePath);
+            InputStream inputStream = resource.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             String line;
             while((line = br.readLine()) != null){
                 gasList.add(line.trim());

@@ -6,6 +6,7 @@ body {
     padding: 20px;
     background-color: #f9f9f9;
     padding-top: 10px;
+    padding-bottom: 0px;
     min-height: 100vh;
 }
 
@@ -39,16 +40,21 @@ body {
     color: #333;
 }
 
+.title{
+    text-align: center;
+}
+
 /* 주유소 리스트 전체 컨테이너 */
 .stations-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* 카드 사이의 간격 */
+    flex-direction: column;
+    gap: 15px; /* 카드 사이의 간격 */
     justify-content: center;
     margin: 0 auto;
     max-width: 1200px; /* 최대 너비 제한 */
-    margin-top: 2px; /* 지도와 리스트 사이 간격 */
     padding-top: 5vh; /* 지도 높이만큼 여백 추가 */
+    margin-bottom: 40px;
 }
 
 /* 개별 주유소 카드 스타일 */
@@ -57,7 +63,8 @@ body {
     border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: calc(33.333% - 15px); /* 한 줄에 3개 배치 */
+    /*width: calc(33.333% - 15px); !* 한 줄에 3개 배치 *!*/
+    width: 100%;
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -71,6 +78,18 @@ body {
     font-weight: bold;
     color: #0073e6;
     margin-bottom: 10px;
+    justify-content: space-between;
+}
+
+.naver-map-link {
+    text-decoration: none;
+    font-size: 18px; /* 아이콘 크기 조절 */
+    color: #2DB400; /* 네이버 색상 */
+    transition: transform 0.2s ease;
+}
+
+.naver-map-link:hover {
+    transform: scale(1.2); /* 확대 효과 */
 }
 
 /* 주유소 주소와 전화번호 */
@@ -128,18 +147,140 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 9;
     background-color: #eee; /* 배경색 추가 */
 }
 
 .map-container {
-    height: 36vh; /* 뷰포트 높이의 40% */
+    height: 90vh; /* 뷰포트 높이의 40% */
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* 동그란 버튼 스타일 */
+.toggle-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 11;
+}
+
+.toggle-button:hover {
+    background-color: #e64a19;
+}
+
+.side-panel.active {
+    right: 0; /* 패널이 열릴 때 */
+}
+
+.toggle-button.active {
+    right: 550px; /* 패널이 열릴 때 버튼도 왼쪽으로 이동 */
+}
+
+.close-panel{
+    display: none;
+    position: sticky;
+    z-index: 20;
+}
+
+/* 패널 스타일 */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -600px; /* 처음엔 숨김 */
+    width: 500px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    padding: 20px;
+    padding-top: 0px;
+    z-index: 10;
+
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+.sticky-container {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 20;
+    padding: 15px; /* 내부 여백 */
+    display: flex;
+    justify-content: space-between; /* 요소를 세로 정렬 */
+    align-items: center; /* 왼쪽 정렬 */
+    flex-direction: row-reverse;
+    gap: 10px; /* 요소 간격 추가 */
+}
+
+/* 패널 내부의 스크롤바 스타일 조정 */
+.side-panel::-webkit-scrollbar {
+    width: 8px; /* 스크롤바 너비 */
+}
+
+.side-panel::-webkit-scrollbar-thumb {
+    background: #ccc; /* 스크롤바 색상 */
+    border-radius: 4px; /* 둥근 모서리 */
+}
+
+.side-panel::-webkit-scrollbar-track {
+    background: #f5f5f5; /* 스크롤바 트랙 색상 */
+}
+
+
+.side-panel.active {
+    right: 0px; /* 패널이 열릴 때 */
+}
+
+/*최저가 select*/
+#oilTypeSelector {
+    /* 기본 스타일 */
+    flex-grow: 1;
+    padding: 10px 30px 10px 10px; /* 내부 여백 조절 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    position: sticky;
+    z-index: 20;
+
+
+    /* hover 시 스타일 */
+    transition: border-color 0.3s ease;
+}
+
+#oilTypeSelector:hover {
+    border-color: #007bff;
+}
+
+#oilTypeSelector:focus {
+    outline: none; /* focus 테두리 제거 */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* option 스타일 (필요에 따라 추가) */
+#oilTypeSelector option {
+    padding: 5px;
+}
+
 
 
 
@@ -160,13 +301,108 @@ body {
 
 @media screen and (max-width: 768px) {
 
+    /* 닫기 버튼 스타일 */
+    .close-panel {
+        background-color: #ff5722; /* 버튼 색상 */
+        color: white;
+        border: none;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        border-radius: 50%; /* 동그란 버튼 */
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #oilTypeSelector {
+        width: 75%;
+        font-size: 14px;
+    }
+
+    .sticky-container {
+        padding: 10px 15px; /* 좌우 여백 추가 */
+    }
+
+    .close-panel:hover {
+        background-color: #e64a19; /* 호버 시 색상 변경 */
+        transform: scale(1.1); /* 살짝 커지는 효과 */
+    }
+
+    .close-panel:active {
+        transform: scale(0.95); /* 클릭할 때 살짝 눌리는 효과 */
+    }
+
+    .title{
+        font-size: 15px;
+        text-align: right;
+    }
+
+    /* 동그란 버튼 스타일 */
+    .toggle-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease;
+        z-index: 2000;
+    }
+
+    .toggle-button:hover {
+        background-color: #e64a19;
+    }
+
+    .side-panel.active {
+        right: 0; /* 패널이 열릴 때 */
+    }
+
+    .toggle-button.active {
+        right: 0px; /* 패널이 열릴 때 버튼도 왼쪽으로 이동 */
+    }
+
+    /* 패널 스타일 */
+    .side-panel {
+        position: fixed;
+        top: 0;
+        right: -600px; /* 처음엔 숨김 */
+        width: 300px;
+        height: 100%;
+        background-color: white;
+        box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+        transition: right 0.3s ease;
+        padding: 20px;
+        z-index: 50;
+    }
+
+    .side-panel.active {
+        right: 0px; /* 패널이 열릴 때 */
+    }
+
+
+
     .oil-prices-table{
         font-size: 12px;
     }
 
     /* 지도 높이 줄이기 */
     .map-container {
-        height: 30vh; /* 모바일에서 30% 높이 */
+        height: 90vh; /* 모바일에서 100% 높이 */
     }
 
     /* 주유소 카드 한 줄에 1~2개 */

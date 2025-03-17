@@ -2,6 +2,7 @@ package com.example.oil.Oil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,10 +74,9 @@ public class OilController {
     @GetMapping("/oilPrice/{goo}")
     public String showOilPrices(@PathVariable String goo, Model model) {
 
-        double[] coordinates = new double[2];
         String filePath = oilService.filePath(goo);
         List<String> file = oilService.readFile(filePath);
-        System.out.println(file);
+        //System.out.println(file);
 
         List<OilDataDto> oilDataList = oilService.fetchOilDataAsMap(file);
         List<Map<String, Object>> oilDataForView = new ArrayList<>();

@@ -1,6 +1,8 @@
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    margin-bottom: 0px;
+    margin-top: 0px;
     display: flex; /* body를 flex container로 설정 */
     flex-direction: column; /* 수직 방향으로 배치 */
     min-height: 100vh; /* 최소 높이를 뷰포트 높이로 설정 */
@@ -18,7 +20,7 @@ body {
     display: flex;
     justify-content: center; /* 내용 중앙 정렬 */
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .card-container {
@@ -29,6 +31,9 @@ body {
 }
 
 .station-card {
+    text-decoration: none; /* 밑줄 제거 */
+    color: inherit; /* 부모 요소의 색상 상속 */
+    cursor: pointer; /* 마우스 커서 변경 */
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
@@ -41,10 +46,12 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 150px; /*최소 높이 지정*/
+    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
 
 .station-card:hover {
     transform: translateY(-5px);
+    background-color: #f0f0f0; /* 호버 시 배경색 변경 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -53,24 +60,6 @@ body {
     font-weight: bold;
     color: #333;
     text-align: center; /* 텍스트 가운데 정렬 */
-}
-
-/* ... 기존 CSS ... */
-
-.station-card {
-    /* ... 기존 스타일 ... */
-    text-decoration: none; /* 밑줄 제거 */
-    color: inherit; /* 부모 요소의 색상 상속 */
-    cursor: pointer; /* 마우스 커서 변경 */
-    display: flex; /* 내용 가운데 정렬 */
-    justify-content: center;
-    align-items: center;
-    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
-}
-
-.station-card:hover {
-    /* ... 기존 호버 스타일 ... */
-    background-color: #f0f0f0; /* 호버 시 배경색 변경 */
 }
 
 .title-container{
@@ -111,9 +100,14 @@ body {
     background-color: #45a049; /* 마우스 호버 시 약간 어두운 녹색으로 변경 */
 }
 
+@media screen and (max-width: 700px) {
+    .card-container {
+        flex-direction: column; /* 수직 방향으로 카드 배치 */
+        flex-grow: 0;
+    }
 
-@media screen and (max-width: 768px) {
     .station-card {
-        width: 100%; /* 한 줄에 하나만 배치 */
+        width: 100%; /* 카드 너비 100%로 변경 */
+        margin-bottom: 20px; /* 카드 간 간격 유지 */
     }
 }

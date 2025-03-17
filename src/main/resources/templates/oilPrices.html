@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상생카드 주유소</title>
     <link rel="stylesheet" href="/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -12,66 +13,98 @@
 <body>
 <h1 class="page-title">
     <a href="/" class="back">뒤로가기</a>
-    상생카드 주유소 리스트
-    <select id="oilTypeSelector">
-        <option value="none">유종 선택</option>
-        <option value="휘발유">휘발유</option>
-        <option value="경유">경유</option>
-        <option value="고급휘발유">고급 휘발유</option>
-        <option value="실내등유">실내 등유</option>
-    </select>
+    <h2 class="title">상생카드 주유소 리스트</h2>
 
 </h1>
 <div class="map-wrapper">
     <div class="map-container" id="map">
         <h1>상생카드 주유소 찾기</h1>
     </div>
+    <button class="toggle-button" id="toggleButton">+</button>
 </div>
 
+<div class="side-panel" id="sidePanel">
+    <div class="sticky-container">
+        <button class="close-panel" id="closePanel">&times;</button>
+        <select id="oilTypeSelector">
+            <option value="none">(최저가) 유종 선택</option>
+            <option value="휘발유">휘발유</option>
+            <option value="경유">경유</option>
+            <option value="고급휘발유">고급 휘발유</option>
+            <option value="실내등유">실내 등유</option>
+        </select>
+    </div>
 
-<!-- 주유소 데이터가 있을 경우 -->
-<div class="stations-container" th:if="${not #lists.isEmpty(result)}">
-    <div class="station-card" th:each="station : ${result}"
-         th:data-address="${station.NEW_ADR}"
-         th:data-name="${station.OS_NM}">
-        <div class="station-header" th:text="${station.OS_NM}"></div>
-        <div class="station-info">
-            <div class="station-address"><span class="label">주소:</span> <span th:text="${station.NEW_ADR}"></span></div>
-            <div class="station-phone"><span class="label">전화번호:</span> <span th:text="${station.TEL}"></span></div>
+    <!-- 주유소 데이터가 있을 경우 -->
+    <div class="stations-container" th:if="${not #lists.isEmpty(result)}">
+        <div class="station-card" th:each="station : ${result}"
+             th:data-address="${station.NEW_ADR}"
+             th:data-name="${station.OS_NM}">
+            <div class="station-header">
+                <span th:text="${station.OS_NM}"></span>
+                <a th:href="@{https://map.naver.com/p/search/{address}(address=${station.NEW_ADR})}"
+                   target="_blank"
+                   class="naver-map-link">
+                    길찾기📍
+                </a>
+            </div>
+            <div class="station-info">
+                <div class="station-address"><span class="label">주소:</span> <span th:text="${station.NEW_ADR}"></span></div>
+                <div class="station-phone"><span class="label">전화번호:</span> <span th:text="${station.TEL}"></span></div>
+            </div>
+            <table class="oil-prices-table">
+                <thead>
+                <tr>
+                    <th>유종</th>
+                    <th>가격</th>
+                    <th>상생카드 가격</th>
+                    <th>거래 날짜</th>
+                    <th>거래 시간</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="price : ${station.oilPrice}"
+                    th:data-prodCdName="${price.prodCdName}"
+                    th:data-price="${price.price}"
+                    th:data-sangsaengPrice="${price.sangsaengPrice}">
+                    <td th:text="${price.prodCdName}"></td>
+                    <td th:text="${price.price}"></td>
+                    <td style="font-size: 16px" th:text="${price.sangsaengPrice}"></td>
+                    <td th:text="${price.tradeDt}"></td>
+                    <td th:text="${price.tradeTm}"></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="oil-prices-table">
-            <thead>
-            <tr>
-                <th>유종</th>
-                <th>가격</th>
-                <th>상생카드 가격</th>
-                <th>거래 날짜</th>
-                <th>거래 시간</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="price : ${station.oilPrice}"
-            th:data-prodCdName="${price.prodCdName}"
-            th:data-price="${price.price}"
-            th:data-sangsaengPrice="${price.sangsaengPrice}">
-                <td th:text="${price.prodCdName}"></td>
-                <td th:text="${price.price}"></td>
-                <td style="font-size: 16px" th:text="${price.sangsaengPrice}"></td>
-                <td th:text="${price.tradeDt}"></td>
-                <td th:text="${price.tradeTm}"></td>
-            </tr>
-            </tbody>
-        </table>
+    </div>
+
+    <!-- 주유소 데이터가 없을 경우 -->
+    <div class="no-data-message" th:unless="${not #lists.isEmpty(result)}">
+        <p>주유소 정보가 없습니다.</p>
     </div>
 </div>
 
-<!-- 주유소 데이터가 없을 경우 -->
-<div class="no-data-message" th:unless="${not #lists.isEmpty(result)}">
-    <p>주유소 정보가 없습니다.</p>
-</div>
 </body>
 
 <script>
+
+    //동그란 버튼
+    $(document).ready(function() {
+        $("#toggleButton").click(function() {
+            $("#sidePanel").toggleClass("active");
+            $("#toggleButton").toggleClass("active");
+
+            // 버튼 텍스트 변경 (+ ↔ ×)
+            let isOpen = $("#sidePanel").hasClass("active");
+            $("#toggleButton").text(isOpen ? "×" : "+");
+        });
+
+        $("#closePanel").click(function() {
+            $("#sidePanel").removeClass("active");
+            $("#toggleButton").removeClass("active");
+            $("#toggleButton").text("+"); // 버튼 초기화
+        });
+    });
 
     $(document).ready(function() {
         // 드롭다운 변경 시 최저가 강조
@@ -128,10 +161,22 @@
         });
     }
 
-    const mapElement = document.getElementById("map");
-    console.log(getComputedStyle(mapElement).position);
+    //const mapElement = document.getElementById("map");
 
-    var locationBtnHtml = '<a naver.maps.Event.once(map, \'init\', function() {\n' +
+    var map = new naver.maps.Map("map", {
+        center: new naver.maps.LatLng(37.3595316, 127.1052133),
+        zoom: 16,
+        mapTypeControl: true
+    });
+
+    var myMarker = null;
+
+    /*var infoWindow = new naver.maps.InfoWindow({
+        anchorSkew: true
+    });*/
+    var markers = [];
+
+    /*var locationBtnHtml = '<a naver.maps.Event.once(map, \'init\', function() {\n' +
         '        //customControl 객체 이용하기\n' +
         '        var customControl = new naver.maps.CustomControl(locationBtnHtml, {\n' +
         '            position: naver.maps.Position.TOP_LEFT\n' +
@@ -149,9 +194,9 @@
         '        var location = new naver.maps.LatLng(position.coords.latitude,\n' +
         '            position.coords.longitude);\n' +
         '\n' +
-        '        /*map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.\n' +
+        '        /!*map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.\n' +
         '        map.setZoom(16); // 지도의 줌 레벨을 변경합니다.\n' +
-        '        marker.setPosition(location);*/\n' +
+        '        marker.setPosition(location);*!/\n' +
         '        if (!myMarker) {\n' +
         '            // 마커 이미지 설정\n' +
         '            const markerImage = {\n' +
@@ -173,22 +218,74 @@
         '        map.setCenter(location);\n' +
         '        map.setZoom(16);\n' +
         '\n' +
-        '    }href="#" class="btn_mylct" style="display: inline-block; padding: 1px 2px; background-color: #007bff; color: white; text-align: center; text-decoration: none; border-radius: 5px; border: inline-block; cursor: pointer; font-size: 13px;">' +
+        '    }href="#" class="btn_mylct" style="display: inline-block; margin: 5px; padding: 1px 3px; background-color: #007bff; color: white; text-align: center; text-decoration: none; border-radius: 5px; border: inline-block; cursor: pointer; font-size: 17px;">' +
+        '<span class="spr_trff spr_ico_mylct">내 위치</span>' +
+        '</a>';*/
+
+    // 위치 버튼 추가
+    var locationBtnHtml = '<a href="#" class="btn_mylct" ' +
+        'style="display: inline-block; margin: 5px; padding: 8px 12px; background-color: #007bff; ' +
+        'color: white; text-align: center; text-decoration: none; border-radius: 5px; ' +
+        'cursor: pointer; font-size: 17px;">' +
         '<span class="spr_trff spr_ico_mylct">내 위치</span>' +
         '</a>';
 
-    var map = new naver.maps.Map("map", {
-        center: new naver.maps.LatLng(37.3595316, 127.1052133),
-        zoom: 16,
-        mapTypeControl: true
+    // 지도 초기화 후 버튼 추가
+    naver.maps.Event.once(map, 'init', function () {
+        var customControl = new naver.maps.CustomControl(locationBtnHtml, {
+            position: naver.maps.Position.TOP_LEFT
+        });
+
+        // 버튼 클릭 시 위치 가져오기
+        naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function () {
+            getCurrentLocation();
+        });
     });
 
-    let myMarker;
+    // 현재 위치 요청 함수
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation, {
+                enableHighAccuracy: true, // GPS 사용
+                timeout: 5000,  // 5초 동안 응답 없으면 에러
+                maximumAge: 0   // 캐시된 위치 정보 사용 안 함
+            });
+        } else {
+            alert("현재 위치 정보를 지원하지 않는 브라우저입니다.");
+        }
+    }
 
-    var infoWindow = new naver.maps.InfoWindow({
-        anchorSkew: true
-    });
-    var markers = [];
+    // 위치 가져오기 성공 시 실행
+    function onSuccessGeolocation(position) {
+        var location = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+        // 마커 생성 또는 업데이트
+        if (!myMarker) {
+            myMarker = new naver.maps.Marker({
+                position: location,
+                map: map,
+                icon: {
+                    url: '/images/car.png', // 현재 위치 마커 이미지
+                    size: new naver.maps.Size(33, 33),
+                    origin: new naver.maps.Point(0, 0),
+                    anchor: new naver.maps.Point(15, 15)
+                }
+            });
+        } else {
+            myMarker.setPosition(location);
+        }
+
+        // 지도 위치 이동
+        map.setCenter(location);
+        map.setZoom(16);
+    }
+
+    // 위치 가져오기 실패 시 실행
+    function onErrorGeolocation(error) {
+        console.error("Geolocation 오류:", error);
+        alert("위치 정보를 가져올 수 없습니다. 위치 권한을 확인해주세요.");
+    }
+
 
     // 주유소 위치를 모두 표시하는 함수
     function addStationMarkers() {
@@ -234,7 +331,7 @@
     }
 
     // 정보창 표시 함수
-    function showInfoWindow(marker, name, oilPrices) {
+    /*function showInfoWindow(marker, name, oilPrices) {
         var priceInfoHtml = `
             <table border="1" style="width:100%; text-align:center; border-collapse: collapse;">
                 <thead>
@@ -265,7 +362,7 @@
 
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
-    }
+    }*/
 
     // 카드 강조 효과 함수
     function highlightCard(selectedCard) {
@@ -315,14 +412,14 @@
         });
     });
 
-    //현재 위치
+    /*//현재 위치
     function onSuccessGeolocation(position) {
         var location = new naver.maps.LatLng(position.coords.latitude,
             position.coords.longitude);
 
-        /*map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
+        /!*map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
         map.setZoom(16); // 지도의 줌 레벨을 변경합니다.
-        marker.setPosition(location);*/
+        marker.setPosition(location);*!/
         if (!myMarker) {
             // 마커 이미지 설정
             const markerImage = {
@@ -344,7 +441,7 @@
         map.setCenter(location);
         map.setZoom(16);
 
-    }
+    }*/
 
 
 
@@ -399,9 +496,9 @@
     }
 
     function initGeocoder() {
-        map.addListener('click', function(e) {
+        /*map.addListener('click', function(e) {
             searchCoordinateToAddress(e.coord);
-        });
+        });*/
 
         // station-card 클릭 이벤트
         $('.station-card').on('click', function() {
