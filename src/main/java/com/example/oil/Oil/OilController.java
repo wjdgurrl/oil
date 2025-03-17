@@ -106,7 +106,7 @@ public class OilController {
                                     priceData.put("prodCdName",oilPrice.getProdCd());
                                     priceData.put("price", oilPrice.getPrice());
                                     try {
-                                        double sangsaengPrice = Double.parseDouble(oilPrice.getPrice()) * 0.97;
+                                        double sangsaengPrice = Double.parseDouble(oilPrice.getPrice()) * 0.93;
                                         priceData.put("sangsaengPrice", String.format("%.0f", sangsaengPrice));
                                     } catch (NumberFormatException e) {
                                         priceData.put("sangsaengPrice", "가격 오류");
