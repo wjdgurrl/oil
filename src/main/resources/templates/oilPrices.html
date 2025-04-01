@@ -105,8 +105,8 @@
         $(document).mouseup(function(e) {
             var sidePanel = $("#sidePanel");
 
-            // 현재 기기가 모바일인지 확인 (화면 너비가 768px 이하일 경우만 실행)
-            if (window.innerWidth <= 768) {
+            // 현재 기기가 모바일인지 확인 (화면 너비가 768px 이하일 경우만 실행) , 패널 열렸는지 확인
+            if (window.innerWidth <= 768 && sidePanel.hasClass("active")) {
                 // 클릭한 곳이 사이드 패널 내부가 아닐 경우 패널 닫기
                 if (!sidePanel.is(e.target) && sidePanel.has(e.target).length === 0) {
                     sidePanel.removeClass("active");
