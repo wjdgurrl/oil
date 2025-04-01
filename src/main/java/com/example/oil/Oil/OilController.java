@@ -41,8 +41,9 @@ public class OilController {
 
     @GetMapping("/testOil")
     public String testOil(Model model) {
-        model.addAttribute("address", "광주 서구 풍서좌로 83 (매월동)");
-        model.addAttribute("naverApiKey", NAVER_API_KEY);
+        /*model.addAttribute("address", "광주 서구 풍서좌로 83 (매월동)");
+        model.addAttribute("naverApiKey", NAVER_API_KEY);*/
+
         return "testOil";
     }
 

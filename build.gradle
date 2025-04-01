@@ -44,6 +44,9 @@ dependencies {
 	//좌표 변환
 	implementation 'org.locationtech.proj4j:proj4j:1.1.1'
 
+	//jsoup, 크롤링 라이브러리
+	implementation 'org.jsoup:jsoup:1.19.1'
+
 }
 
 tasks.named('test') {

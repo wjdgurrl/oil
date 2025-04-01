@@ -194,9 +194,7 @@ public class OilService {
         coordinates[1] = wgs84Coord.y;
         System.out.println("KATEC → wgs84변환 결과: X=" + coordinates[0] + ", Y=" + coordinates[1]);
         return coordinates;
-
-
-
+        
     }
 
 }
