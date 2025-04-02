@@ -150,7 +150,7 @@ public class OilService {
             case "C004":
                 return "실내등유";
             case "K015":
-                return "자동차 부탄";
+                return "LPG";
             default:
                 return "알 수 없음";
         }

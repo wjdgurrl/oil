@@ -89,6 +89,7 @@ public class OilController {
                         stationData.put("OS_NM", oilStation.getOsNm());
                         stationData.put("NEW_ADR", oilStation.getNewAdr());
                         stationData.put("TEL", oilStation.getTel());
+                        stationData.put("LPG_YN",oilStation.getLpgYn());
 
                         // 1. katec 좌표 (안됨)
                         //stationData.put("GISXCOOR", oilStation.getGisXCoor());
