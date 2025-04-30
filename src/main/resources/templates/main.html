@@ -26,12 +26,16 @@
             <h2 class="area">북구</h2>
         </a>
         <a th:href="@{/oilPrice/namgoo}" class="station-card"> <!- 남구 링크 -->
-            <h2 class="area">남구 + 동구</h2>
+            <h2 class="area">남구<br>동구</br></h2>
         </a>
         <a th:href="@{/oilPrice/gwangsangoo}" class="station-card"> <!- 광산구 링크 -->
             <h2 class="area">광산구</h2>
         </a>
     </div>
+    <h2 style="font-size: 1em">
+        만든이 : gurrl8356@naver.com
+    </h2>
+    <p>오늘 방문자: <span th:text="${@oilService.getTodayCount()}">0</span></p>
 </div>
 </body>
 <script>

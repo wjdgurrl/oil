@@ -16,5 +16,23 @@
     <h2 style="font-size: 5em">
         기타 문의 : gurrl8356@naver.com
     </h2>
+
+    <form action="/edit" method="GET">
+        <input type="password" id="password" name="password" placeholder="수정코드" required>
+        <button type="button" onclick="sendPassword()">send</button>
+    </form>
 </body>
+
+<script th:inline="javascript">
+    function sendPassword() {
+        const password = $("#password").val(); // 입력값 가져오기
+
+        $.ajax({
+            url: "/edit?password=" + encodeURIComponent(password),
+            type: "GET",
+            // ...
+        });
+    }
+</script>
+
 </html>

@@ -12,11 +12,16 @@ import lombok.Setter;
 import org.locationtech.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicLong;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +42,9 @@ public class OilService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private LocalDate currentDate = LocalDate.now();
+    private AtomicLong todayCount = new AtomicLong(0);
 
     public String filePath(String goo){
         String file=" ";
@@ -195,6 +203,21 @@ public class OilService {
         System.out.println("KATEC → wgs84변환 결과: X=" + coordinates[0] + ", Y=" + coordinates[1]);
         return coordinates;
         
+    }
+
+    //방문자 카운터
+    public void incrementTodayCount() {
+        // 날짜가 바뀌면 카운트 리셋
+        if (!LocalDate.now().equals(currentDate)) {
+            currentDate = LocalDate.now();
+            todayCount.set(0);
+        }
+        todayCount.incrementAndGet();
+    }
+
+    public long getTodayCount() {
+        // 날짜가 바뀌었으면 0 반환
+        return LocalDate.now().equals(currentDate) ? todayCount.get() : 0;
     }
 
 }

@@ -3,12 +3,10 @@ package com.example.oil.Oil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,6 +20,9 @@ public class OilController {
 
     @Value("${naverApiKey}")
     private String NAVER_API_KEY;
+
+    @Value("${pass}")
+    private String PASS;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -39,6 +40,19 @@ public class OilController {
         return "credit";
     }
 
+    @GetMapping("/edit")
+    public String edit(@RequestParam String password) {
+        boolean isValid = password.equals(PASS);
+        return isValid ? "/edit" : "/credit";
+    }
+
+    @GetMapping("/check")
+    @ResponseBody
+    public String check(@RequestParam String id) {
+        String apiUrl = "https://www.opinet.co.kr/api/searchByName.do?code=" + API_KEY + "&out=xml&osnm=" + id;
+        return apiUrl;
+    }
+
     @GetMapping("/testOil")
     public String testOil(Model model) {
         /*model.addAttribute("address", "광주 서구 풍서좌로 83 (매월동)");
@@ -49,10 +63,12 @@ public class OilController {
 
     @GetMapping("/oilPrice")
     public String main(){
+        oilService.incrementTodayCount(); // 방문자 +1;
         return "main";
     }
     @GetMapping("/get")
     public String get(Model model){
+
         List<String> data = new ArrayList<>();
         List<String> file = oilService.readFile("src/main/resources/gwangsangoo.csv");
         for (String s : file) {
