@@ -15,7 +15,7 @@ import java.util.*;
 @Controller
 public class OilController {
 
-    @Value("${API-KEY}")
+    @Value("${API_KEY}")
     private String API_KEY;
 
     @Value("${naverApiKey}")
