@@ -34,7 +34,7 @@ import java.util.Map;
 @Service
 public class OilService {
 
-    @Value("${API-KEY}")
+    @Value("${APIKEY}")
     private String API_KEY;
 
     @Autowired
