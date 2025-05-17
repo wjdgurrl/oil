@@ -66,6 +66,8 @@ public class OilController {
         oilService.incrementTodayCount(); // 방문자 +1;
         return "main";
     }
+
+    //테스팅용
     @GetMapping("/get")
     public String get(Model model){
 

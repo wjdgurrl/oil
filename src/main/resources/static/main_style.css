@@ -69,15 +69,22 @@ body {
 }
 
 .title{
-    margin-left: 10px;
+    margin-left: 5vw;
     text-align: center;
     flex-grow : 1;
 }
 
 .image{
     margin-right: 10px;
-    width: 3em;
+    width: 5em;
     height: 3em;
+}
+.credit-text{
+    position: absolute;
+    right: 2.7em;
+    color: #333333;
+    top: 3.3em;
+    font-size: 15px;
 }
 
 .back {
