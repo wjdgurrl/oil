@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Controller
@@ -48,8 +50,13 @@ public class OilController {
 
 
     @GetMapping("/check")
-    public String check(@RequestParam String id) {
-        String apiUrl = "https://www.opinet.co.kr/api/searchByName.do?code=" + API_KEY + "&out=xml&osnm=" + id;
+    public String check(@RequestParam String id) throws UnsupportedEncodingException {
+        String encodedId = URLEncoder.encode(id, "UTF-8");
+
+        String apiUrl = "https://www.opinet.co.kr/api/searchByName.do?code=" + API_KEY +
+                "&out=xml&osnm=" + encodedId;
+
+        // 브라우저가 외부 링크로 완전히 이동하게 함
         return "redirect:" + apiUrl;
     }
 
