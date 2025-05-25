@@ -43,14 +43,14 @@ public class OilController {
     @GetMapping("/edit")
     public String edit(@RequestParam String password) {
         boolean isValid = password.equals(PASS);
-        return isValid ? "/edit" : "/credit";
+        return isValid ? "edit" : "credit"; // 뷰 이름 반환
     }
 
+
     @GetMapping("/check")
-    @ResponseBody
     public String check(@RequestParam String id) {
         String apiUrl = "https://www.opinet.co.kr/api/searchByName.do?code=" + API_KEY + "&out=xml&osnm=" + id;
-        return apiUrl;
+        return "redirect:" + apiUrl;
     }
 
     @GetMapping("/testOil")

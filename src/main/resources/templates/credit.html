@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="/main_style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>만든이</title>
 </head>
 <body>
@@ -20,20 +21,12 @@
 
     <form action="/edit" method="GET">
         <input type="password" id="password" name="password" placeholder="수정코드" required>
-        <button type="button" onclick="sendPassword()">send</button>
+        <button type="submit">send</button>
     </form>
 </body>
 
-<script th:inline="javascript">
-    function sendPassword() {
-        const password = $("#password").val(); // 입력값 가져오기
+<script>
 
-        $.ajax({
-            url: "/edit?password=" + encodeURIComponent(password),
-            type: "GET",
-            // ...
-        });
-    }
 </script>
 
 </html>
