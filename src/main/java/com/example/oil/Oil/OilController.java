@@ -2,12 +2,10 @@ package com.example.oil.Oil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
@@ -60,49 +58,16 @@ public class OilController {
         return "redirect:" + apiUrl;
     }
 
-    @GetMapping("/testOil")
-    public String testOil(Model model) {
-        /*model.addAttribute("address", "광주 서구 풍서좌로 83 (매월동)");
-        model.addAttribute("naverApiKey", NAVER_API_KEY);*/
-
-        return "testOil";
-    }
-
     @GetMapping("/oilPrice")
     public String main(){
-        oilService.incrementTodayCount(); // 방문자 +1;
         return "main";
-    }
-
-    //테스팅용
-    @GetMapping("/get")
-    public String get(Model model){
-
-        List<String> data = new ArrayList<>();
-        List<String> file = oilService.readFile("src/main/resources/gwangsangoo.csv");
-        for (String s : file) {
-            try {
-                String apiUrl = "https://www.opinet.co.kr/api/searchByName.do?code=" + API_KEY + "&out=json&osnm=" + s + "&area=16";
-                System.out.println(apiUrl);
-                String response = restTemplate.getForObject(apiUrl, String.class);
-                System.out.println(response);
-                data.add(response);
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        model.addAttribute("data", data);
-        return "get";
     }
 
 
     @GetMapping("/oilPrice/{goo}")
     public String showOilPrices(@PathVariable String goo, Model model) {
-
         String filePath = oilService.filePath(goo);
         List<String> file = oilService.readFile(filePath);
-        //System.out.println(file);
 
         List<OilDataDto> oilDataList = oilService.fetchOilDataAsMap(file);
         List<Map<String, Object>> oilDataForView = new ArrayList<>();
@@ -116,15 +81,6 @@ public class OilController {
                         stationData.put("TEL", oilStation.getTel());
                         stationData.put("LPG_YN",oilStation.getLpgYn());
 
-                        // 1. katec 좌표 (안됨)
-                        //stationData.put("GISXCOOR", oilStation.getGisXCoor());
-                        //stationData.put("GISYCOOR", oilStation.getGisYCoor());
-
-                        // 2. 위도 경도만 보내기
-                        /*coordinates = oilService.coordinateConverter(Double.parseDouble(oilStation.getGisXCoor()),Double.parseDouble(oilStation.getGisYCoor()));
-                        stationData.put("GISXCOOR",coordinates[0]);
-                        stationData.put("GISYCOOR",coordinates[1]);*/
-
                         List<Map<String, String>> priceList = new ArrayList<>();
                         if (oilStation.getOilPrice() != null) {
                             for (OilDataDto.OilPrice oilPrice : oilStation.getOilPrice()) {
@@ -133,7 +89,11 @@ public class OilController {
                                     priceData.put("prodCdName",oilPrice.getProdCd());
                                     priceData.put("price", oilPrice.getPrice());
                                     try {
-                                        double sangsaengPrice = Double.parseDouble(oilPrice.getPrice()) * 0.93;
+                                        double sangsaengPrice;
+                                        sangsaengPrice = Double.parseDouble(oilPrice.getPrice()) * 0.93;
+                                        if(goo.equals("onnuri")){
+                                            sangsaengPrice = Double.parseDouble(oilPrice.getPrice()) * 0.9;
+                                        }
                                         priceData.put("sangsaengPrice", String.format("%.0f", sangsaengPrice));
                                     } catch (NumberFormatException e) {
                                         priceData.put("sangsaengPrice", "가격 오류");

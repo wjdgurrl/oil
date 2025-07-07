@@ -14,6 +14,29 @@ body {
     flex-grow: 1; /* 남는 공간을 모두 차지 */
 }
 
+.onnuri-card {
+    text-decoration: none; /* 밑줄 제거 */
+    color: #000000; /* 부모 요소의 색상 상속 */
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    background-color: #e85d07;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+.onnuri {
+    font-size: 1.3em;
+    margin: 0;
+}
+
+.onnuri-card:hover {
+    transform: translateY(-5px);
+    background-color: #e3996c; /* 호버 시 배경색 변경 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 .map-container {
     height: 40vh; /* 지도 높이를 뷰포트 높이의 40%로 설정 */
     background-color: #eee; /* 임시 배경색 */
@@ -64,14 +87,23 @@ body {
 
 .title-container{
     display: flex;
-    justify-content: space-between; /* 요소들을 양 끝으로 배치 */
-    align-items: center; /* 요소들을 수직 가운데 정렬 */
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+
+}
+
+.right-links {
+    display: flex;
+    gap: 10px; /* 버튼 사이 간격 */
+    align-items: center;
 }
 
 .title{
-    margin-left: 5vw;
     text-align: center;
     flex-grow : 1;
+    font-size: 2em;
+    margin-left: 16vw;
 }
 
 .image{
@@ -79,12 +111,19 @@ body {
     width: 5em;
     height: 3em;
 }
+
+.credit {
+    text-decoration: none; /* 밑줄 제거 */
+}
+
 .credit-text{
-    position: absolute;
-    right: 2.7em;
-    color: #333333;
-    top: 3.3em;
-    font-size: 15px;
+    color: #1b17be;
+    white-space: nowrap;
+    font-size: 20px;
+}
+.credit:hover{
+    transform: translateY(-5px);
+
 }
 
 .back {
@@ -107,14 +146,87 @@ body {
     background-color: #45a049; /* 마우스 호버 시 약간 어두운 녹색으로 변경 */
 }
 
-@media screen and (max-width: 700px) {
+/*@media screen and (max-width: 700px) {
     .card-container {
-        flex-direction: column; /* 수직 방향으로 카드 배치 */
+        flex-direction: column; !* 수직 방향으로 카드 배치 *!
         flex-grow: 0;
     }
 
     .station-card {
-        width: 100%; /* 카드 너비 100%로 변경 */
-        margin-bottom: 20px; /* 카드 간 간격 유지 */
+        width: 100%; !* 카드 너비 100%로 변경 *!
+        margin-bottom: 20px; !* 카드 간 간격 유지 *!
+    }
+
+    .title-container {
+        display: flex;
+        justify-content: space-between; !* 양쪽 정렬 *!
+        align-items: center;
+        padding: 0 10px;
+        flex-wrap: nowrap;
+    }
+
+    .title {
+        font-size: 1.4em;
+        white-space: nowrap; !* 줄바꿈 방지 *!
+        margin: 0;
+    }
+
+    .credit-text {
+        font-size: 0.8em;
+        white-space: nowrap; !* 줄바꿈 방지 *!
+        margin-left: 15px;
+    }
+
+}*/
+
+@media screen and (max-width: 700px) {
+    .card-container {
+        flex-direction: column;
+        flex-grow: 0;
+    }
+
+    .station-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .title-container {
+        flex-direction: column; /* 요소들을 수직으로 */
+        align-items: center; /* 가운데 정렬 */
+    }
+
+    .title {
+        font-size: 1.4em;
+        white-space: nowrap;
+        margin: 0 0 10px 0;
+    }
+
+    .right-links {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .credit {
+        text-align: center;
+    }
+
+    .credit-text {
+        font-size: 1em;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .onnuri {
+        font-size: 1em;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .onnuri-card {
+        width: auto;
+        padding: 6px 10px;
+        text-align: center;
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상생카드 주유소</title>
+    <title>바우처카드 주유소</title>
     <link rel="stylesheet" href="/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <script type="text/javascript" th:src="'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=' + ${naverApiKey} + '&submodules=geocoder'"></script>
@@ -12,12 +12,12 @@
 <body>
 <h1 class="page-title">
     <a href="/" class="back">뒤로가기</a>
-    <h2 class="title">상생카드 주유소 리스트</h2>
+    <h2 class="title">주유소 리스트</h2>
 
 </h1>
 <div class="map-wrapper">
     <div class="map-container" id="map">
-        <h1>상생카드 주유소 찾기</h1>
+        <h1>주유소 찾기</h1>
     </div>
     <button class="toggle-button" id="toggleButton">+</button>
 </div>
@@ -60,7 +60,7 @@
                 <tr>
                     <th>유종</th>
                     <th>가격</th>
-                    <th>상생카드 가격</th>
+                    <th>할인 가격</th>
                     <th>거래 날짜</th>
                     <th>거래 시간</th>
                 </tr>

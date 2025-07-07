@@ -1,34 +1,24 @@
 package com.example.oil.Oil;
 
-// 2. 서비스(Service) 클래스 생성
-// 외부 API를 호출하고 데이터를 DTO로 매핑하는 역할
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Resource;
-import lombok.Getter;
-import lombok.Setter;
-import org.locationtech.proj4j.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
-import org.springframework.context.annotation.Configuration;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import org.springframework.stereotype.Service;
-import java.time.LocalDate;
-import java.util.concurrent.atomic.AtomicLong;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLOutput;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 
 @Service
@@ -42,9 +32,6 @@ public class OilService {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private LocalDate currentDate = LocalDate.now();
-    private AtomicLong todayCount = new AtomicLong(0);
 
     public String filePath(String goo){
         String file=" ";
@@ -60,6 +47,9 @@ public class OilService {
                 break;
             case "gwangsangoo" :
                 file = "gwangsangoo.csv";
+                break;
+            case "onnuri" :
+                file = "onnuri.csv";
                 break;
             default:
                 System.out.println("file not found");
@@ -179,45 +169,6 @@ public class OilService {
             e.printStackTrace();
         }
         return gasList;
-    }
-
-    private static final CRSFactory factory = new CRSFactory();
-    private static final CoordinateReferenceSystem katec = factory.createFromName("EPSG:2097");
-    private static final CoordinateReferenceSystem wgs84 = factory.createFromName("EPSG:4326");
-    private static final CoordinateTransform transform = new BasicCoordinateTransform(katec, wgs84);
-
-    public double[] coordinateConverter(double gisX, double gisY){
-        if (Double.isNaN(gisX) || Double.isNaN(gisY) || Double.isInfinite(gisX) || Double.isInfinite(gisY)) {
-            throw new IllegalArgumentException("잘못된 좌표 값: x=" + gisX + ", y=" + gisY);
-        }
-        double[] coordinates = new double[2];
-        System.out.println("원래 좌표 : x=" + gisX + " y=" + gisY);
-
-        //katec -> wgs84
-        ProjCoordinate katecCoord = new ProjCoordinate(gisX,gisY);
-        ProjCoordinate wgs84Coord = new ProjCoordinate();
-        transform.transform(katecCoord, wgs84Coord);
-
-        coordinates[0] = wgs84Coord.x;
-        coordinates[1] = wgs84Coord.y;
-        System.out.println("KATEC → wgs84변환 결과: X=" + coordinates[0] + ", Y=" + coordinates[1]);
-        return coordinates;
-        
-    }
-
-    //방문자 카운터
-    public void incrementTodayCount() {
-        // 날짜가 바뀌면 카운트 리셋
-        if (!LocalDate.now().equals(currentDate)) {
-            currentDate = LocalDate.now();
-            todayCount.set(0);
-        }
-        todayCount.incrementAndGet();
-    }
-
-    public long getTodayCount() {
-        // 날짜가 바뀌었으면 0 반환
-        return LocalDate.now().equals(currentDate) ? todayCount.get() : 0;
     }
 
 }

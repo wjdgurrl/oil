@@ -5,18 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="/main_style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상생카드 주유소 찾기</title>
+    <title>바우처카드 주유소 찾기</title>
 </head>
 <body>
 <div class="main-container">
     <div class="title-container">
         <h1 class="title">
-            상생카드 주유소 찾기
+            바우처카드 주유소 찾기
         </h1>
-        <a href="/credit" class="credit" >
-            <img src="/images/checkCard.png" class="image" alt="credit">
-            <h2 class="credit-text">요청/문의</h2>
-        </a>
+        <div class="right-links">
+            <!--온누리 상품권-->
+            <a th:href="@{/oilPrice/onnuri}" class="onnuri-card"> <!- 온누리 링크 -->
+                <h2 class="onnuri">온누리상품권 주유소</h2>
+            </a>
+
+            <a href="/credit" class="credit" >
+                <!--<img src="/images/pomeranian.png" class="image" alt="credit">-->
+                <h2 class="credit-text">요청/문의</h2>
+            </a>
+        </div>
     </div>
     <!--<a th:href="@{/testOil}">test</a>-->
     <div class="card-container">
@@ -34,9 +41,8 @@
         </a>
     </div>
     <h2 style="font-size: 1em">
-        만든이 : gurrl8356@naver.com
+        풍부한 하루 되세요
     </h2>
-    <p>오늘 방문자: <span th:text="${@oilService.getTodayCount()}">0</span></p>
 </div>
 </body>
 <script>
