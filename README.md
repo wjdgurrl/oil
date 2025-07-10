@@ -28,7 +28,6 @@
     - 유가 정보를 제공받아 필요한 정보만 DTO로 새롭게 정의하여 사용
 - 외부 API : opinet 유가 정보 api, 네이버 지도 api
     - restTemplate를 활용하여 외부 api로부터 json 데이터 호출
-    - naverMap api를 통해
 - etc : AWS(aws elastic beanstalk), git
 
 
