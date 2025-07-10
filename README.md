@@ -38,7 +38,7 @@
 상세페이지
 <img width="1890" height="921" alt="화면 캡처 2025-02-06 032022" src="https://github.com/user-attachments/assets/347cf15e-4431-4549-a7be-852b8dceaa13" />
 
-좌측 모달창 활성화
+우측 패널창 활성화
 <img width="1903" height="916" alt="화면 캡처 2025-02-06 032047" src="https://github.com/user-attachments/assets/cac20c03-db4c-4edf-afa8-d6d69c8137bc" />
 
 유종별 최저가 찾기
